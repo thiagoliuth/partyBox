@@ -64,6 +64,20 @@
                     {% endfor %}
                 </div>
             </section>
+            <section class="evento-form-section" aria-labelledby="evento-cupom-titulo">
+                <h3 id="evento-cupom-titulo">Cupom de divulgação (opcional)</h3>
+                <div class="evento-form-grid">
+                    {% for field in evento_form %}
+                        {% if field.name == "cupom_codigo" or field.name == "cupom_descricao" or field.name == "cupom_dataExpiracao" %}
+                        <div class="form-field form-field-{{ field.name }}">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
             <footer class="evento-form-actions">
                 <button class="button button-secondary" type="button" data-evento-close>Cancelar</button>
                 <button class="button button-primary" type="submit">Publicar evento</button>
