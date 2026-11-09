@@ -51,6 +51,13 @@
             </div>
             <p class="event-card-location">{{ evento.cidade }}, {{ evento.siglaEstado }}</p>
             <p class="event-card-date"><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}">{{ evento.dataEvento|date:"d/m/Y" }}</time> · {{ evento.horarioEvento|time:"H:i" }}</p>
+            {% if evento.cupom_valido %}
+            <div class="event-coupon">
+                <span class="chip chip-coupon">Tem cupom</span>
+                <p><strong>{{ evento.cupom_codigo }}</strong> · {{ evento.cupom_descricao }}</p>
+                <p>Válido até {{ evento.cupom_dataExpiracao|default:evento.dataEvento|date:"d/m/Y" }}</p>
+            </div>
+            {% endif %}
             <div class="event-card-meta">
                 <span class="event-price">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
                 <span class="event-rating" aria-label="Média {{ evento.mediaClassificacao|floatformat:1 }}, {{ evento.votosPositivos|add:evento.votosNegativos }} votos">★ {{ evento.mediaClassificacao|floatformat:1 }} · {{ evento.votosPositivos|add:evento.votosNegativos }} votos</span>

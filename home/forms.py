@@ -23,6 +23,8 @@ class EventoForm(forms.ModelForm):
             'linkInstagram',
             'thumbnail',
             'usuario',
+            'cupom_codigo',
+            'cupom_descricao',
         ]
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: Festival de música'}),
@@ -39,6 +41,16 @@ class EventoForm(forms.ModelForm):
             'ehPublico': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
             'linkSite': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://'}),
             'linkInstagram': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://'}),
+            'cupom_codigo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: PARTYBOX10'}),
+            'cupom_descricao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 10% de desconto na entrada até as 20h'}),
+            'cupom_dataExpiracao': forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}),
             'thumbnail': forms.ClearableFileInput(attrs={'class': 'form-control form-file'}),
             'usuario': forms.Select(attrs={'class': 'form-control'}),
         }
+
+        def clean(self):
+            dados = super().clean()
+            if dados.get("cupom_codigo") and not dados.get("cupom_descricao"):
+                self.add_error("cupom_descricao", "Explique o que o cupom oferece")
+            return dados
+    

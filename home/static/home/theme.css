@@ -111,6 +111,10 @@ html[data-theme="dark"] .theme-icon-moon, html[data-theme="light"] .theme-icon-s
 .event-card-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--lb-border-soft); }
 .event-price { color: var(--lb-green); font-weight: 600; }
 .event-rating { color: var(--lb-text-body); }
+.event-coupon { margin-top: 12px; padding: 10px 12px; border: 1px dashed var(--lb-green); border-radius: var(--lb-radius); }
+.event-coupon p { margin: 6px 0 0; color: var(--lb-text-body); }
+.event-coupon strong { color: var(--lb-text-strong); letter-spacing: .04em; }
+.chip-coupon { background: var(--lb-green); color: var(--lb-on-green); }
 .evento-dialog { width: min(760px, calc(100% - 32px)); max-width: none; max-height: min(88vh, 900px); padding: 0; overflow: visible; border: 1px solid var(--lb-border); border-radius: var(--lb-radius); background: var(--lb-surface); color: var(--lb-text); }
 .evento-dialog::backdrop { background: color-mix(in srgb, var(--lb-bg) 82%, transparent); }
 .evento-dialog-panel { display: flex; max-height: min(88vh, 900px); flex-direction: column; overflow: hidden; }
@@ -181,3 +185,4 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
     :root { --lb-motion: 0ms; }
 }
+

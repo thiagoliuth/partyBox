@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.utils import timezone
 
 class Categoria(models.Model):
     class CategoriaType(models.TextChoices):
@@ -83,6 +83,9 @@ class Evento(models.Model):
     ehPublico = models.BooleanField(default=True)
     linkSite = models.URLField(blank=True, null=True)
     linkInstagram = models.URLField(blank=True, null=True)
+    cupom_codigo = models.CharField("Código do cupom", max_length=30, blank=True)
+    cupom_descricao = models.CharField("Descrição do cupom", max_length=120, blank=True)
+    cupom_dataExpiracao = models.DateField("Validade do cupom", blank=True, null=True)
     thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="eventos"
@@ -91,6 +94,13 @@ class Evento(models.Model):
     class Meta:
         verbose_name = "Evento"
         verbose_name_plural = "Eventos"
+
+    @property
+    def cupom_valido(self):
+        if not self.cupom_codigo:
+            return False
+        validade = self.cupom_dataExpiracao or self.dataEvento
+        return validade >= timezone.localdate()
 
 
 class EventoImage(models.Model):
