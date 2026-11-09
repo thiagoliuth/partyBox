@@ -11,3 +11,6 @@ media/
 .env
 .env.*
 .zed/
+
+# Backup do quadro do GitHub e script de reorganização (só local)
+backup-quadro/

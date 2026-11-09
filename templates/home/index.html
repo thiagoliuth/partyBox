@@ -5,33 +5,35 @@
 {% block content %}
 <header class="page-heading">
     <h1>Mural</h1>
-    <p>Mensagens da comunidade.</p>
+    <p>Eventos da região.</p>
 </header>
 <div class="home-layout grid gap-8 lg:grid-cols-[minmax(0,1fr)_230px]">
     <section aria-labelledby="mural-titulo">
         <div class="section-header">
-            <h2 id="mural-titulo">Mensagens recentes</h2>
+            <h2 id="mural-titulo">Eventos recentes</h2>
         </div>
-        {% if mensagens %}
+        {% if eventos %}
         <ul class="message-list">
-            {% for m in mensagens %}
+            {% for e in eventos %}
             <li>
                 <article class="message">
                     <header
                         class="message-meta flex flex-wrap items-center gap-x-3 gap-y-1"
                     >
-                        <span>Por <strong>{{ m.autor }}</strong></span>
-                        <time datetime="{{ m.criada_em|date:'c' }}"
-                            >{{ m.criada_em|date:"d/m/Y · H:i" }}</time
+                        <span>Por <strong>{{ e.usuario }}</strong></span>
+                        <time datetime="{{ e.criada_em|date:'c' }}"
+                            >{{ e.dataEvento|date:"d/m/Y" }} . {{ e.horarioEvento|time:"H:i" }}</time
                         >
-                        {% if m.categoria %}<span class="chip"
-                            >{{ m.categoria }}</span
+                        {% if e.categoria %}<span class="chip"
+                            >{{ e.categoria }}</span
                         >{% endif %}
                     </header>
-                    <h3>{{ m.titulo }}</h3>
+                    <h3>{{ e.cidade }} - {{ e.siglaEstado }}</h3>
                     <div class="editorial message-copy">
-                        {{ m.conteudo|linebreaksbr }}
+                        {{ e.descricao|linebreaksbr }} - {{ e.categoria}}
                     </div>
+
+
                 </article>
             </li>
             {% endfor %}
@@ -57,12 +59,12 @@
                     stroke-width="1.5"
                 />
             </svg>
-            <h3>Nenhuma mensagem publicada ainda.</h3>
-            <p>As novas mensagens aparecem aqui.</p>
+            <h3>Nenhum evento cadastrado ainda.</h3>
+            <p>Os novos eventos aparecem aqui.</p>
             <a
-                href="{% url 'admin:home_mensagem_add' %}"
+                href="{% url 'admin:home_evento_add' %}"
                 class="button button-primary"
-                >Publicar mensagem</a
+                >Cadastrar Evento</a
             >
         </div>
         {% endif %}

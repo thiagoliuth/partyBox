@@ -2,12 +2,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import EventoForm
-from .models import Categoria, Evento, Mensagem
+from .models import Categoria, Evento
 
 
 def index(request):
-    mensagens = Mensagem.objects.all()
-    return render(request, "home/index.html", {"mensagens": mensagens})
+    eventos = Evento.objects.all()
+    return render(request, "home/index.html", {"eventos": eventos})
 
 
 def sobre(request):
@@ -53,4 +53,4 @@ def cadastrar_evento(request):
         form.save()
         return redirect("index")
 
-    return render(request, "home/index.html", {"mensagens": Mensagem.objects.all(), "evento_form": form})
+    return render(request, "home/index.html", {"eventos": Evento.objects.all(), "evento_form": form})
