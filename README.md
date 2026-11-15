@@ -41,10 +41,13 @@ Permite ao usuário criar sua própria conta e fazer autenticação, utilizando 
 ### Tela de Cadastrar Eventos 📅
 
 Um usuário pode cadastrar os seus próprios eventos (mas atenção, deve sempre fornecer nome, data e endereço!)
+<img width="628" height="740" alt="image" src="https://github.com/user-attachments/assets/2eb168d5-9709-4a61-900d-9e6f1b67316e" />
 
 ### Lista de eventos 🤩
 
 Aqui, o usuário pode saber de tudo o que está acontecendo na região. Inclusive, pode filtrar por suas categorias preferidas!
+<img width="898" height="573" alt="image" src="https://github.com/user-attachments/assets/96e07fb5-9e6b-4c52-b9f8-3651ef3ae78d" />
+/eventos/
 
 ### Tela de configuração de usuário ⚙️
 
