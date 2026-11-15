@@ -46,6 +46,23 @@ def evento_list(request):
 
 
 @login_required
+def meus_eventos(request):
+    ordem = request.GET.get("ordem", "nome")
+    ordenacoes = {
+        "nome": ("nome", "pk"),
+        "data": ("dataEvento", "horarioEvento", "pk"),
+    }
+    if ordem not in ordenacoes:
+        ordem = "nome"
+    eventos = (
+        Evento.objects.filter(usuario=request.user)
+        .select_related("categoria")
+        .order_by(*ordenacoes[ordem])
+    )
+    return render(request, "home/meus_eventos.html", {"eventos": eventos, "ordem": ordem})
+
+
+@login_required
 def cadastrar_evento(request):
     if request.method != "POST":
         return redirect(f"{reverse('index')}#cadastro-evento")

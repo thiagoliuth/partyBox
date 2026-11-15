@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Meus eventos • PartyBoxd{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+    <h1>Meus eventos</h1>
+    <p>Gerencie os eventos que você cadastrou.</p>
+</header>
+
+<form class="event-filters meus-eventos-filters" method="get">
+    <div class="event-filter-field">
+        <label for="ordem-meus-eventos">Ordenar por</label>
+        <select id="ordem-meus-eventos" name="ordem" onchange="this.form.submit()">
+            <option value="nome" {% if ordem == "nome" %}selected{% endif %}>Nome (A–Z)</option>
+            <option value="data" {% if ordem == "data" %}selected{% endif %}>Data (crescente)</option>
+        </select>
+    </div>
+    <noscript><button class="button button-primary" type="submit">Aplicar ordenação</button></noscript>
+</form>
+
+{% if eventos %}
+<section class="event-grid" aria-label="Meus eventos cadastrados">
+    {% for evento in eventos %}
+    <article class="event-card">
+        {% if evento.thumbnail %}
+        <img class="event-card-image" src="{{ evento.thumbnail.url }}" alt="Imagem do evento {{ evento.nome }}">
+        {% else %}
+        <div class="event-card-placeholder" aria-hidden="true"><span>PartyBoxd</span></div>
+        {% endif %}
+        <div class="event-card-content">
+            <div class="event-card-heading">
+                <h2>{{ evento.nome }}</h2>
+                {% if evento.categoria %}<span class="chip">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
+            </div>
+            <p class="event-card-location">{{ evento.cidade }}, {{ evento.siglaEstado }}</p>
+            <p class="event-card-date"><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}">{{ evento.dataEvento|date:"d/m/Y" }}</time> · {{ evento.horarioEvento|time:"H:i" }}</p>
+            <div class="event-card-meta">
+                <span class="event-price">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
+                <a class="text-link" href="{{ evento.pk }}/editar/">Editar</a>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+{% else %}
+<div class="empty-state">
+    <h2>Você ainda não cadastrou eventos.</h2>
+    <p>Quando cadastrar um evento, ele aparecerá aqui para você gerenciar.</p>
+    <button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>
+</div>
+{% endif %}
+{% endblock %}
