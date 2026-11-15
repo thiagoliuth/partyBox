@@ -141,6 +141,12 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 .form-error, .form-errors { margin: 6px 0 0; color: var(--lb-error); font-size: 12px; }
 .form-errors { margin-top: 16px; }
 .evento-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--lb-border-soft); }
+.evento-edit-form { max-width: 760px; margin-bottom: 0; overflow: visible; padding: 0; }
+.evento-delete-form { max-width: 760px; display: flex; justify-content: flex-end; margin: 0 0 32px; padding-top: 16px; border-top: 1px solid var(--lb-border-soft); }
+button.evento-delete-button { border: 1px solid var(--lb-error); background: transparent; color: var(--lb-error); cursor: pointer; }
+button.evento-delete-button:hover { background: var(--lb-error); color: var(--lb-bg); }
+.event-messages { margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--lb-green); background: var(--lb-surface); color: var(--lb-text-body); }
+.event-messages p { margin: 0; }
 .aside-copy { margin: 0 0 8px; line-height: 1.75; }
 .aside-note { margin-top: 24px; border-top: 1px solid var(--lb-border-soft); padding-top: 18px; }
 .aside-note p { margin: 8px 0 0; font-size: 13px; }

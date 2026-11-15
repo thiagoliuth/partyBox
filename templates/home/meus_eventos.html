@@ -3,6 +3,11 @@
 {% block title %}Meus eventos • PartyBoxd{% endblock %}
 
 {% block content %}
+{% if messages %}
+<div class="event-messages" role="status" aria-live="polite">
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+</div>
+{% endif %}
 <header class="page-heading">
     <h1>Meus eventos</h1>
     <p>Gerencie os eventos que você cadastrou.</p>
@@ -37,7 +42,7 @@
             <p class="event-card-date"><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}">{{ evento.dataEvento|date:"d/m/Y" }}</time> · {{ evento.horarioEvento|time:"H:i" }}</p>
             <div class="event-card-meta">
                 <span class="event-price">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
-                <a class="text-link" href="{{ evento.pk }}/editar/">Editar</a>
+                <a class="text-link" href="{% url 'editar_evento' evento.pk %}">Editar</a>
             </div>
         </div>
     </article>

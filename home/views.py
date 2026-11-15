@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from .forms import EventoForm
 from .models import Categoria, Evento
@@ -60,6 +62,29 @@ def meus_eventos(request):
         .order_by(*ordenacoes[ordem])
     )
     return render(request, "home/meus_eventos.html", {"eventos": eventos, "ordem": ordem})
+
+
+@login_required
+def editar_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk, usuario=request.user)
+    if request.method == "POST":
+        form = EventoForm(request.POST, request.FILES, instance=evento, prefix="editar")
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Evento atualizado com sucesso.")
+            return redirect("meus_eventos")
+    else:
+        form = EventoForm(instance=evento, prefix="editar")
+    return render(request, "home/editar_evento.html", {"form": form, "evento": evento})
+
+
+@login_required
+@require_POST
+def excluir_evento(request, pk):
+    evento = get_object_or_404(Evento, pk=pk, usuario=request.user)
+    evento.delete()
+    messages.success(request, "Evento excluído com sucesso.")
+    return redirect("meus_eventos")
 
 
 @login_required
