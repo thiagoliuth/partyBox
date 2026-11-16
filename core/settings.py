@@ -42,7 +42,9 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "home.Usuario"
-LOGIN_URL = "admin:login"
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "index"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -129,3 +131,4 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+

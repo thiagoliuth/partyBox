@@ -38,7 +38,7 @@
     </div>
 </dialog>
 
-<dialog class="evento-dialog" id="modal-cadastro" aria-labelledby="modal-cadastro-titulo" {% if cadastro_form.errors %}data-auth-open-on-load{% endif %}>
+<dialog class="evento-dialog" id="modal-cadastro" aria-labelledby="modal-cadastro-titulo" {% if request.resolver_match.url_name == 'login' %}data-auth-open-on-load{% endif %}>
     <div class="evento-dialog-panel max-w-md mx-auto">
         <header class="evento-dialog-header">
             <div>
@@ -49,6 +49,8 @@
         </header>
         <form class="evento-form" method="post" action="{% url 'cadastro' %}" novalidate>
             {% csrf_token %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
             {% if cadastro_form.non_field_errors %}
                 <div class="form-errors" role="alert">{{ cadastro_form.non_field_errors }}</div>
             {% endif %}
