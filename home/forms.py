@@ -23,7 +23,6 @@ class EventoForm(forms.ModelForm):
             'linkSite',
             'linkInstagram',
             'thumbnail',
-            'usuario',
             'cupom_codigo',
             'cupom_descricao',
         ]
@@ -46,7 +45,6 @@ class EventoForm(forms.ModelForm):
             'cupom_descricao': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 10% de desconto na entrada até as 20h'}),
             'cupom_dataExpiracao': forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}),
             'thumbnail': forms.ClearableFileInput(attrs={'class': 'form-control form-file'}),
-            'usuario': forms.Select(attrs={'class': 'form-control'}),
         }
 
         def clean(self):

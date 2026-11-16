@@ -61,11 +61,11 @@
             </svg>
             <h3>Nenhum evento cadastrado ainda.</h3>
             <p>Os novos eventos aparecem aqui.</p>
-            <a
+            {% if user.is_authenticated %}<a
                 href="{% url 'admin:home_evento_add' %}"
                 class="button button-primary"
                 >Cadastrar Evento</a
-            >
+            >{% endif %}
         </div>
         {% endif %}
     </section>

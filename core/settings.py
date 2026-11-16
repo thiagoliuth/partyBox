@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "home.Usuario"
+LOGIN_URL = "admin:login"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

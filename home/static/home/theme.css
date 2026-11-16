@@ -127,7 +127,7 @@ html[data-theme="dark"] .theme-icon-moon, html[data-theme="light"] .theme-icon-s
 .evento-form-section h3 { margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--lb-border-soft); color: var(--lb-text-strong); font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
 .evento-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
 .form-field { min-width: 0; }
-.form-field-nome, .form-field-descricao, .form-field-bairro, .form-field-rua, .form-field-linkSite, .form-field-linkInstagram, .form-field-thumbnail, .form-field-usuario { grid-column: 1 / -1; }
+.form-field-nome, .form-field-descricao, .form-field-bairro, .form-field-rua, .form-field-linkSite, .form-field-linkInstagram, .form-field-thumbnail { grid-column: 1 / -1; }
 .form-field > label:not(.form-check-label) { display: block; margin-bottom: 6px; color: var(--lb-text-body); font-size: 12px; font-weight: 600; }
 .form-control { display: block; width: 100%; min-height: 44px; box-sizing: border-box; border: 1px solid var(--lb-border); border-radius: var(--lb-radius); padding: 9px 11px; background: var(--lb-bg); color: var(--lb-text-strong); font: 14px/1.4 var(--lb-font-ui); }
 .form-control::placeholder { color: var(--lb-text-muted); }
@@ -178,11 +178,10 @@ textarea.form-control { min-height: 96px; resize: vertical; }
     .evento-dialog-header { padding: 18px 16px 14px; }
     .evento-form { padding: 2px 16px 18px; }
     .evento-form-grid { grid-template-columns: 1fr; gap: 12px; }
-    .form-field-nome, .form-field-descricao, .form-field-bairro, .form-field-rua, .form-field-linkSite, .form-field-linkInstagram, .form-field-thumbnail, .form-field-usuario { grid-column: auto; }
+    .form-field-nome, .form-field-descricao, .form-field-bairro, .form-field-rua, .form-field-linkSite, .form-field-linkInstagram, .form-field-thumbnail { grid-column: auto; }
     .evento-form-actions { position: sticky; bottom: -18px; margin-inline: -16px; padding: 12px 16px; background: var(--lb-surface); }
 }
 
 @media (prefers-reduced-motion: reduce) {
     :root { --lb-motion: 0ms; }
 }
-

@@ -1,4 +1,6 @@
+
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -45,13 +47,16 @@ def evento_list(request):
     )
 
 
+@login_required
 def cadastrar_evento(request):
     if request.method != "POST":
         return redirect(f"{reverse('index')}#cadastro-evento")
 
     form = EventoForm(request.POST, request.FILES)
     if form.is_valid():
-        form.save()
+        evento = form.save(commit=False)
+        evento.usuario = request.user
+        evento.save()
         return redirect("index")
 
     return render(request, "home/index.html", {"eventos": Evento.objects.all(), "evento_form": form})

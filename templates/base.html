@@ -52,7 +52,7 @@
                         >Eventos</a
                     >
 
-                    <button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>
+                    {% if user.is_authenticated %}<button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>{% endif %}
 
                     <a
                         href="{% url 'sobre' %}"
@@ -108,7 +108,7 @@
                             {% if request.resolver_match.url_name == 'eventos' %}aria-current="page"{% endif %}
                             >Eventos</a
                         >
-                        <button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>
+                        {% if user.is_authenticated %}<button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>{% endif %}
                         <a
                             href="{% url 'sobre' %}"
                             {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}
@@ -141,8 +141,10 @@
         <main id="conteudo" class="site-width flex-1" tabindex="-1">
             {% block content %}{% endblock %}
         </main>
-        {% include "home/includes/evento_modal.html" %}
+
+        {% if user.is_authenticated %}{% include "home/includes/evento_modal.html" %}{% endif %}
         {% include "home/includes/auth_modals.html" %}
+
         <footer class="site-footer">
             <div
                 class="site-width flex flex-wrap items-center justify-between gap-4"
