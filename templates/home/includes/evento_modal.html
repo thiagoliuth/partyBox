@@ -9,75 +9,7 @@
         </header>
         <form class="evento-form" method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {% if evento_form.non_field_errors %}<div class="form-errors" role="alert">{{ evento_form.non_field_errors }}</div>{% endif %}
-            <section class="evento-form-section" aria-labelledby="evento-detalhes-titulo">
-                <h3 id="evento-detalhes-titulo">Sobre o evento</h3>
-                <div class="evento-form-grid">
-                    {% for field in evento_form %}
-                        {% if field.name == "nome" or field.name == "descricao" or field.name == "dataEvento" or field.name == "horarioEvento" or field.name == "categoria" %}
-                        <div class="form-field form-field-{{ field.name }}">
-                            {% if field.name == "ehPago" or field.name == "ehPublico" %}
-                            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
-                            {% else %}
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% endif %}
-                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </section>
-            <section class="evento-form-section" aria-labelledby="evento-local-titulo">
-                <h3 id="evento-local-titulo">Localização</h3>
-                <div class="evento-form-grid">
-                    {% for field in evento_form %}
-                        {% if field.name == "cidade" or field.name == "siglaEstado" or field.name == "bairro" or field.name == "rua" or field.name == "numero" %}
-                        <div class="form-field form-field-{{ field.name }}">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </section>
-            <section class="evento-form-section" aria-labelledby="evento-links-titulo">
-                <h3 id="evento-links-titulo">Mais informações</h3>
-                <div class="evento-form-grid">
-                    {% for field in evento_form %}
-                        {% if field.name == "linkSite" or field.name == "linkInstagram" or field.name == "thumbnail" %}
-                        <div class="form-field form-field-{{ field.name }}">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for field in evento_form %}
-                        {% if field.name == "ehPago" or field.name == "ehPublico" %}
-                        <div class="form-field form-field-{{ field.name }}">
-                            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
-                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </section>
-            <section class="evento-form-section" aria-labelledby="evento-cupom-titulo">
-                <h3 id="evento-cupom-titulo">Cupom de divulgação (opcional)</h3>
-                <div class="evento-form-grid">
-                    {% for field in evento_form %}
-                        {% if field.name == "cupom_codigo" or field.name == "cupom_descricao" or field.name == "cupom_dataExpiracao" %}
-                        <div class="form-field form-field-{{ field.name }}">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </section>
+            {% include "home/includes/evento_form_fields.html" with form=evento_form %}
             <footer class="evento-form-actions">
                 <button class="button button-secondary" type="button" data-evento-close>Cancelar</button>
                 <button class="button button-primary" type="submit">Publicar evento</button>

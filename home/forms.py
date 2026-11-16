@@ -29,8 +29,8 @@ class EventoForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: Festival de música'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Conte um pouco sobre o evento'}),
-            'dataEvento': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'horarioEvento': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'dataEvento': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
+            'horarioEvento': forms.TimeInput(format='%H:%M', attrs={'class': 'form-control', 'type': 'time'}),
             'siglaEstado': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 2, 'placeholder': 'SP'}),
             'cidade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cidade'}),
             'bairro': forms.TextInput(attrs={'class': 'form-control'}),

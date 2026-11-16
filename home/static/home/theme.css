@@ -93,6 +93,7 @@ html[data-theme="dark"] .theme-icon-moon, html[data-theme="light"] .theme-icon-s
 .empty-state h3 { margin: 0 0 6px; color: var(--lb-text-body); font-size: 14px; font-weight: 500; }
 .empty-state p { margin: 0 0 16px; }
 .event-filters { display: grid; grid-template-columns: minmax(180px, 2fr) minmax(150px, 1fr) minmax(150px, 1fr) auto; align-items: end; gap: 16px; margin: 0 0 28px; padding: 16px; border: 1px solid var(--lb-border-soft); border-radius: var(--lb-radius); background: var(--lb-surface); }
+.meus-eventos-filters { grid-template-columns: minmax(220px, 360px); }
 .event-filter-field { display: grid; gap: 6px; }
 .event-filter-field label { color: var(--lb-text-body); font-size: 12px; font-weight: 600; }
 .event-filter-field input, .event-filter-field select { width: 100%; min-height: 44px; box-sizing: border-box; border: 1px solid var(--lb-border); border-radius: var(--lb-radius); padding: 8px 10px; background: var(--lb-bg); color: var(--lb-text-strong); font: inherit; }
@@ -140,6 +141,12 @@ textarea.form-control { min-height: 96px; resize: vertical; }
 .form-error, .form-errors { margin: 6px 0 0; color: var(--lb-error); font-size: 12px; }
 .form-errors { margin-top: 16px; }
 .evento-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--lb-border-soft); }
+.evento-edit-form { max-width: 760px; margin-bottom: 0; overflow: visible; padding: 0; }
+.evento-delete-form { max-width: 760px; display: flex; justify-content: flex-end; margin: 0 0 32px; padding-top: 16px; border-top: 1px solid var(--lb-border-soft); }
+button.evento-delete-button { border: 1px solid var(--lb-error); background: transparent; color: var(--lb-error); cursor: pointer; }
+button.evento-delete-button:hover { background: var(--lb-error); color: var(--lb-bg); }
+.event-messages { margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--lb-green); background: var(--lb-surface); color: var(--lb-text-body); }
+.event-messages p { margin: 0; }
 .aside-copy { margin: 0 0 8px; line-height: 1.75; }
 .aside-note { margin-top: 24px; border-top: 1px solid var(--lb-border-soft); padding-top: 18px; }
 .aside-note p { margin: 8px 0 0; font-size: 13px; }
