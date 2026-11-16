@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar — PartyBoxd{% endblock %}
+
+{% block content %}
+<section class="max-w-md mx-auto my-12 p-8 rounded-xl border border-white/10 bg-black/20 backdrop-blur-sm shadow-xl">
+    <h1 class="text-2xl font-bold mb-2">Entrar no PartyBoxd</h1>
+    <p class="text-sm opacity-75 mb-6">Acesse sua conta para avaliar e cadastrar rolês.</p>
+
+    {% if form.non_field_errors %}
+        <div class="mb-4 p-3 rounded-lg bg-red-500/15 border border-red-500/40 text-red-400 text-sm">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium mb-1">
+                Nome de usuário
+            </label>
+            <input
+                type="text"
+                name="{{ form.username.html_name }}"
+                id="{{ form.username.id_for_label }}"
+                value="{{ form.username.value|default:'' }}"
+                required
+                autofocus
+                class="w-full px-3 py-2 rounded-lg border border-white/15 bg-white/5 focus:outline-none focus:border-emerald-400"
+            />
+            {% if form.username.errors %}
+                <p class="text-red-400 text-xs mt-1">{{ form.username.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium mb-1">
+                Senha
+            </label>
+            <input
+                type="password"
+                name="{{ form.password.html_name }}"
+                id="{{ form.password.id_for_label }}"
+                required
+                class="w-full px-3 py-2 rounded-lg border border-white/15 bg-white/5 focus:outline-none focus:border-emerald-400"
+            />
+            {% if form.password.errors %}
+                <p class="text-red-400 text-xs mt-1">{{ form.password.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="button button-primary w-full justify-center mt-2">
+            Entrar
+        </button>
+    </form>
+
+    <p class="text-sm text-center opacity-80 mt-6">
+        Ainda não tem cadastro?
+        <a href="{% url 'cadastro' %}" class="underline font-semibold hover:opacity-100">Criar conta</a>
+    </p>
+</section>
+{% endblock %}

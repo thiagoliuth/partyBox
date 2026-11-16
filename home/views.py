@@ -1,10 +1,13 @@
+
+
+from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .forms import EventoForm
+from .forms import EventoForm, UsuarioCreationForm
 from .models import Categoria, Evento
 
 
@@ -100,3 +103,23 @@ def cadastrar_evento(request):
         return redirect("index")
 
     return render(request, "home/index.html", {"eventos": Evento.objects.all(), "evento_form": form})
+
+
+def cadastro(request):
+    if request.user.is_authenticated:
+        return redirect("index")
+
+    if request.method != "POST":
+        return redirect(f"{reverse('index')}#modal-cadastro")
+
+    form = UsuarioCreationForm(request.POST)
+    if form.is_valid():
+        usuario = form.save()
+        login(request, usuario)
+        return redirect("index")
+
+    return render(
+        request,
+        "home/index.html",
+        {"eventos": Evento.objects.all(), "cadastro_form": form},
+    )
