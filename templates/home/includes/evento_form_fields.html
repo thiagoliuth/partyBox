@@ -1,0 +1,67 @@
+{% with prefix=form.prefix|default:"cadastro" %}
+{% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<section class="evento-form-section" aria-labelledby="{{ prefix }}-detalhes-titulo">
+    <h3 id="{{ prefix }}-detalhes-titulo">Sobre o evento</h3>
+    <div class="evento-form-grid">
+        {% for field in form %}
+            {% if field.name == "nome" or field.name == "descricao" or field.name == "dataEvento" or field.name == "horarioEvento" or field.name == "categoria" %}
+            <div class="form-field form-field-{{ field.name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+<section class="evento-form-section" aria-labelledby="{{ prefix }}-local-titulo">
+    <h3 id="{{ prefix }}-local-titulo">Localização</h3>
+    <div class="evento-form-grid">
+        {% for field in form %}
+            {% if field.name == "cidade" or field.name == "siglaEstado" or field.name == "bairro" or field.name == "rua" or field.name == "numero" %}
+            <div class="form-field form-field-{{ field.name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+<section class="evento-form-section" aria-labelledby="{{ prefix }}-links-titulo">
+    <h3 id="{{ prefix }}-links-titulo">Mais informações</h3>
+    <div class="evento-form-grid">
+        {% for field in form %}
+            {% if field.name == "linkSite" or field.name == "linkInstagram" or field.name == "thumbnail" %}
+            <div class="form-field form-field-{{ field.name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+        {% for field in form %}
+            {% if field.name == "ehPago" or field.name == "ehPublico" %}
+            <div class="form-field form-field-{{ field.name }}">
+                <label class="form-check-label" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+<section class="evento-form-section" aria-labelledby="{{ prefix }}-cupom-titulo">
+    <h3 id="{{ prefix }}-cupom-titulo">Cupom de divulgação (opcional)</h3>
+    <div class="evento-form-grid">
+        {% for field in form %}
+            {% if field.name == "cupom_codigo" or field.name == "cupom_descricao" or field.name == "cupom_dataExpiracao" %}
+            <div class="form-field form-field-{{ field.name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endwith %}

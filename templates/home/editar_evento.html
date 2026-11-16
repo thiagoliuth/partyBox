@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Editar evento • PartyBoxd{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+    <h1>Editar evento</h1>
+    <p>Atualize as informações de {{ evento.nome }}.</p>
+</header>
+
+<form class="evento-form evento-edit-form" method="post" action="{% url 'editar_evento' evento.pk %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include "home/includes/evento_form_fields.html" with form=form %}
+    <footer class="evento-form-actions">
+        <a class="button button-secondary" href="{% url 'meus_eventos' %}">Cancelar</a>
+        <button class="button button-primary" type="submit">Salvar alterações</button>
+    </footer>
+</form>
+
+<form class="evento-delete-form" method="post" action="{% url 'excluir_evento' evento.pk %}" onsubmit="return confirm('Excluir este evento? Esta ação não pode ser desfeita.');">
+    {% csrf_token %}
+    <button class="button evento-delete-button" type="submit">Excluir evento</button>
+</form>
+{% endblock %}
