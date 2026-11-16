@@ -54,12 +54,23 @@
 
                     <button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>
 
-
                     <a
                         href="{% url 'sobre' %}"
                         {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}
                         >Sobre</a
                     >
+
+                    {% if user.is_authenticated %}
+                        <span class="text-sm font-semibold opacity-90">@{{ user.username }}</span>
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="button button-secondary">Sair</button>
+                        </form>
+                    {% else %}
+                        <button class="button button-secondary" type="button" data-auth-open="modal-login" aria-haspopup="dialog">Entrar</button>
+                        <button class="button button-primary" type="button" data-auth-open="modal-cadastro" aria-haspopup="dialog">Criar conta</button>
+                    {% endif %}
+
                     <a href="{% url 'admin:index' %}" class="button button-secondary"
                         >Admin</a
                     >
@@ -103,6 +114,18 @@
                             {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}
                             >Sobre</a
                         >
+
+                        {% if user.is_authenticated %}
+                            <span class="text-sm font-semibold opacity-90">@{{ user.username }}</span>
+                            <form method="post" action="{% url 'logout' %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="button button-secondary">Sair</button>
+                            </form>
+                        {% else %}
+                            <button class="button button-secondary" type="button" data-auth-open="modal-login" aria-haspopup="dialog">Entrar</button>
+                            <button class="button button-primary" type="button" data-auth-open="modal-cadastro" aria-haspopup="dialog">Criar conta</button>
+                        {% endif %}
+
                         <a href="{% url 'admin:index' %}" class="button button-secondary"
                             >Admin</a
                         >
@@ -119,6 +142,7 @@
             {% block content %}{% endblock %}
         </main>
         {% include "home/includes/evento_modal.html" %}
+        {% include "home/includes/auth_modals.html" %}
         <footer class="site-footer">
             <div
                 class="site-width flex flex-wrap items-center justify-between gap-4"
@@ -132,29 +156,73 @@
         </footer>
         <script>
             (() => {
-                const dialog = document.getElementById("cadastro-evento");
-                if (!dialog || typeof dialog.showModal !== "function") return;
-
                 let trigger = null;
-                document.querySelectorAll("[data-evento-open]").forEach((button) => {
-                    button.addEventListener("click", () => {
-                        trigger = button;
+
+                const dialog = document.getElementById("cadastro-evento");
+                if (dialog && typeof dialog.showModal === "function") {
+                    document.querySelectorAll("[data-evento-open]").forEach((button) => {
+                        button.addEventListener("click", () => {
+                            trigger = button;
+                            dialog.showModal();
+                        });
+                    });
+                    dialog.querySelectorAll("[data-evento-close]").forEach((button) => {
+                        button.addEventListener("click", () => dialog.close());
+                    });
+                    dialog.addEventListener("click", (event) => {
+                        if (event.target === dialog) dialog.close();
+                    });
+                    dialog.addEventListener("close", () => {
+                        if (trigger) trigger.focus();
+                    });
+
+                    if (dialog.hasAttribute("data-evento-open-on-load") || window.location.hash === "#cadastro-evento") {
                         dialog.showModal();
+                    }
+                }
+
+                document.querySelectorAll("[data-auth-open]").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const target = document.getElementById(button.dataset.authOpen);
+                        if (target && typeof target.showModal === "function") {
+                            trigger = button;
+                            target.showModal();
+                        }
                     });
                 });
-                dialog.querySelectorAll("[data-evento-close]").forEach((button) => {
-                    button.addEventListener("click", () => dialog.close());
-                });
-                dialog.addEventListener("click", (event) => {
-                    if (event.target === dialog) dialog.close();
-                });
-                dialog.addEventListener("close", () => {
-                    if (trigger) trigger.focus();
+
+                document.querySelectorAll("[data-auth-close]").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const currentDialog = button.closest("dialog");
+                        if (currentDialog) currentDialog.close();
+                    });
                 });
 
-                if (dialog.hasAttribute("data-evento-open-on-load") || window.location.hash === "#cadastro-evento") {
-                    dialog.showModal();
-                }
+                document.querySelectorAll("[data-auth-switch]").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const currentDialog = button.closest("dialog");
+                        const nextDialog = document.getElementById(button.dataset.authSwitch);
+                        if (currentDialog) currentDialog.close();
+                        if (nextDialog && typeof nextDialog.showModal === "function") {
+                            nextDialog.showModal();
+                        }
+                    });
+                });
+
+                document.querySelectorAll("#modal-login, #modal-cadastro").forEach((authDialog) => {
+                    authDialog.addEventListener("click", (event) => {
+                        if (event.target === authDialog) authDialog.close();
+                    });
+                    authDialog.addEventListener("close", () => {
+                        if (trigger) trigger.focus();
+                    });
+                    if (
+                        authDialog.hasAttribute("data-auth-open-on-load") ||
+                        window.location.hash === `#${authDialog.id}`
+                    ) {
+                        authDialog.showModal();
+                    }
+                });
             })();
         </script>
     </body>

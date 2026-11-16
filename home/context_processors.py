@@ -1,5 +1,8 @@
-from .forms import EventoForm
+from .forms import EventoForm, UsuarioCreationForm
 
 
 def evento_form(request):
-    return {"evento_form": EventoForm()}
+    context = {"evento_form": EventoForm()}
+    if not request.user.is_authenticated:
+        context["cadastro_form"] = UsuarioCreationForm()
+    return context
