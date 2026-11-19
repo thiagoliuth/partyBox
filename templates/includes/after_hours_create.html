@@ -1,0 +1,4 @@
+<button class="aa-button {% if placement == 'nav' %}aa-nav-create{% endif %} {% if tone == 'outline' %}aa-button-outline{% else %}aa-button-primary{% endif %}" type="button"
+    {% if user.is_authenticated %}data-evento-open{% else %}data-auth-open="modal-login"{% endif %} aria-haspopup="dialog">
+    {% include "includes/after_hours_icon.html" with icon="plus" only %}<span>Criar evento</span>
+</button>

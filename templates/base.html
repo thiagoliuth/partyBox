@@ -18,152 +18,32 @@
             })();
         </script>
         <link rel="stylesheet" href="{% static 'home/theme.css' %}" />
+        <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'home/after-hours.css' %}" />
         <script src="{% static 'home/theme.js' %}" defer></script>
+        <script src="{% static 'home/after-hours.js' %}" defer></script>
         {% block extra_head %}{% endblock %}
     </head>
     <body
-        class="{% block body_class %}min-h-screen flex flex-col{% endblock %}"
+        class="aa-shell {% block body_class %}{% endblock %}"
     >
         <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-        <header class="site-header">
-            {% block header %}
-            <nav
-                class="site-width flex items-center justify-between gap-6"
-                aria-label="Navegação principal"
-            >
-                <a
-                    href="{% url 'index' %}"
-                    class="brand"
-                    aria-label="PartyBoxd — início"
-                >
-                    <span>PartyBoxd</span>
-                </a>
-                <div class="nav-links desktop-nav flex items-center gap-7">
-                    {% block nav_links %}
-                    <a
-                        href="{% url 'index' %}"
-                        {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}
-                        >Início</a
-                    >
-
-                    <a
-                        href="{% url 'eventos' %}"
-                        {% if request.resolver_match.url_name == 'eventos' %}aria-current="page"{% endif %}
-                        >Eventos</a
-                    >
-
-                    {% if user.is_authenticated %}<a
-                        href="{% url 'meus_eventos' %}"
-                        {% if request.resolver_match.url_name == 'meus_eventos' or request.resolver_match.url_name == 'editar_evento' %}aria-current="page"{% endif %}
-                        >Meus eventos</a
-                    >{% endif %}
-                    {% if user.is_authenticated %}<button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>{% endif %}
-
-                    <a
-                        href="{% url 'sobre' %}"
-                        {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}
-                        >Sobre</a
-                    >
-
-                    {% if user.is_authenticated %}
-                        <span class="text-sm font-semibold opacity-90">@{{ user.username }}</span>
-                        <form method="post" action="{% url 'logout' %}" class="inline">
-                            {% csrf_token %}
-                            <button type="submit" class="button button-secondary">Sair</button>
-                        </form>
-                    {% else %}
-                        <button class="button button-secondary" type="button" data-auth-open="modal-login" aria-haspopup="dialog">Entrar</button>
-                        <button class="button button-primary" type="button" data-auth-open="modal-cadastro" aria-haspopup="dialog">Criar conta</button>
-                    {% endif %}
-
-                    <a href="{% url 'admin:index' %}" class="button button-secondary"
-                        >Admin</a
-                    >
-                    <button class="button button-secondary theme-toggle" type="button" data-theme-toggle aria-label="Alternar tema">
-                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></svg>
-                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z" /></svg>
-                    </button>
-                    {% endblock %}
-                </div>
-                <details class="mobile-nav">
-                    <summary>
-                        <span>Menu</span>
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M4 6h16M4 12h16M4 18h16"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            />
-                        </svg>
-                    </summary>
-                    <div class="nav-links mobile-nav-links">
-                        <a
-                            href="{% url 'index' %}"
-                            {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}
-                            >Início</a
-                        >
-                        <a
-                            href="{% url 'eventos' %}"
-                            {% if request.resolver_match.url_name == 'eventos' %}aria-current="page"{% endif %}
-                            >Eventos</a
-                        >
-                        {% if user.is_authenticated %}<a
-                            href="{% url 'meus_eventos' %}"
-                            {% if request.resolver_match.url_name == 'meus_eventos' or request.resolver_match.url_name == 'editar_evento' %}aria-current="page"{% endif %}
-                            >Meus eventos</a
-                        >{% endif %}
-                        {% if user.is_authenticated %}<button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>{% endif %}
-                        <a
-                            href="{% url 'sobre' %}"
-                            {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}
-                            >Sobre</a
-                        >
-
-                        {% if user.is_authenticated %}
-                            <span class="text-sm font-semibold opacity-90">@{{ user.username }}</span>
-                            <form method="post" action="{% url 'logout' %}" class="inline">
-                                {% csrf_token %}
-                                <button type="submit" class="button button-secondary">Sair</button>
-                            </form>
-                        {% else %}
-                            <button class="button button-secondary" type="button" data-auth-open="modal-login" aria-haspopup="dialog">Entrar</button>
-                            <button class="button button-primary" type="button" data-auth-open="modal-cadastro" aria-haspopup="dialog">Criar conta</button>
-                        {% endif %}
-
-                        <a href="{% url 'admin:index' %}" class="button button-secondary"
-                            >Admin</a
-                        >
-                        <button class="button button-secondary theme-toggle" type="button" data-theme-toggle aria-label="Alternar tema">
-                            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></svg>
-                            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z" /></svg>
-                        </button>
-                    </div>
-                </details>
-            </nav>
-            {% endblock %}
-        </header>
-        <main id="conteudo" class="site-width flex-1" tabindex="-1">
+        {% block header %}{% include "includes/after_hours_header.html" %}{% endblock %}
+        <main id="conteudo" class="aa-width aa-main" tabindex="-1">
             {% block content %}{% endblock %}
         </main>
 
         {% if user.is_authenticated %}{% include "home/includes/evento_modal.html" %}{% endif %}
         {% include "home/includes/auth_modals.html" %}
 
-        <footer class="site-footer">
-            <div
-                class="site-width flex flex-wrap items-center justify-between gap-4"
-            >
-                <p>© {% now "Y" %} PartyBoxd</p>
-                <nav class="flex gap-6" aria-label="Rodapé">
-                    <a href="{% url 'sobre' %}">Sobre o projeto</a>
-                    <a href="{% url 'admin:index' %}">Administração</a>
-                </nav>
+        <footer class="aa-footer">
+            <div class="aa-width aa-footer-inner">
+                <div>
+                    <p class="aa-brand">{% include "includes/after_hours_icon.html" with icon="brand" only %} <span>PartyBoxd</span></p>
+                    <p>Uma agenda pra viver a cidade.</p>
+                </div>
+                <nav aria-label="Rodapé"><a href="{% url 'sobre' %}">Sobre o projeto {% include "includes/after_hours_icon.html" with icon="diagonal" only %}</a></nav>
+                <p class="aa-footer-copy">© {% now "Y" %} PartyBoxd</p>
             </div>
         </footer>
         <script>

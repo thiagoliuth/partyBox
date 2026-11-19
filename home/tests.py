@@ -1,3 +1,6 @@
+from datetime import date, time
+from unittest.mock import patch
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.messages import get_messages
@@ -5,7 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from .forms import EventoForm
-from .models import Evento
+from .models import Categoria, Evento
 
 
 class CadastroEventoTests(TestCase):
@@ -40,7 +43,7 @@ class CadastroEventoTests(TestCase):
 
                 self.assertRedirects(
                     response,
-                    f"{reverse('admin:login')}?next={self.url}",
+                    f"{reverse('login')}?next={self.url}",
                     fetch_redirect_response=False,
                 )
                 self.assertFalse(Evento.objects.exists())
@@ -110,7 +113,7 @@ class MeusEventosTests(TestCase):
             with self.subTest(metodo=metodo):
                 response = getattr(self.client, metodo)(self.url)
                 self.assertRedirects(
-                    response, f"{reverse('admin:login')}?next={self.url}",
+                    response, f"{reverse('login')}?next={self.url}",
                     fetch_redirect_response=False,
                 )
 
@@ -244,7 +247,7 @@ class EdicaoEventoTests(TestCase):
                 with self.subTest(url=url, metodo=metodo):
                     response = getattr(self.client, metodo)(url)
                     self.assertRedirects(
-                        response, f"{reverse('admin:login')}?next={url}",
+                        response, f"{reverse('login')}?next={url}",
                         fetch_redirect_response=False,
                     )
         self.assertEventoInalterado()
@@ -330,3 +333,185 @@ class EdicaoEventoTests(TestCase):
         response = client.post(self.excluir)
         self.assertEqual(response.status_code, 403)
         self.assertEventoInalterado()
+
+
+class DescobertaEventosTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.usuario = get_user_model().objects.create_user(
+            username="agenda", email="agenda@example.com", password="senha-teste"
+        )
+        cls.musica = Categoria.objects.create(tipo=Categoria.CategoriaType.MUSICA)
+        cls.arte = Categoria.objects.create(tipo=Categoria.CategoriaType.ARTE)
+        cls.ontem = cls.criar_evento("Beta ontem", 5)
+        cls.passado = cls.criar_evento("Alfa passado", 1)
+        cls.hoje = cls.criar_evento("Zulu hoje", 6, ehPublico=False)
+        cls.sabado = cls.criar_evento("Festival sábado", 7, thumbnail="thumbnails/sabado.jpg")
+        cls.domingo = cls.criar_evento("Festival domingo", 8)
+        cls.segunda = cls.criar_evento("Festival segunda", 9, horarioEvento=time(9))
+        cls.segunda_tarde = cls.criar_evento("Festival segunda à tarde", 9)
+        cls.outra_uf = cls.criar_evento("Festival outra UF", 10, siglaEstado="MG", categoria=cls.arte)
+        cls.cidade_especial = cls.criar_evento("Cidade especial", 11, cidade="A|B%")
+
+    @classmethod
+    def criar_evento(cls, nome, dia, **campos):
+        dados = {
+            "horarioEvento": time(18),
+            "siglaEstado": "SP",
+            "cidade": "São Paulo",
+            "categoria": cls.musica,
+        }
+        return Evento.objects.create(
+            usuario=cls.usuario, nome=nome, dataEvento=date(2030, 12, dia), **(dados | campos)
+        )
+
+    def setUp(self):
+        calendario = patch("home.views.timezone.localdate", return_value=date(2030, 12, 6))
+        self.calendario = calendario.start()
+        self.addCleanup(calendario.stop)
+
+    def test_mural_fim_de_semana_atual_ou_proximo_sem_eventos_passados(self):
+        for dia, esperados in (
+            (6, [self.sabado, self.domingo]),
+            (7, [self.sabado, self.domingo]),
+            (8, [self.domingo]),
+            (9, []),
+        ):
+            with self.subTest(dia=dia):
+                self.calendario.return_value = date(2030, 12, dia)
+                response = self.client.get(reverse("index"), {"localidade": "São Paulo|SP"})
+                self.assertEqual(response.context["eventos_fim_de_semana"], esperados)
+                self.assertNotIn(self.ontem, response.context["proximos_eventos"])
+                self.assertFalse(set(esperados) & set(response.context["proximos_eventos"]))
+
+    def test_mural_prioriza_foto_proxima_sem_esvaziar_fim_de_semana(self):
+        response = self.client.get(reverse("index"), {"localidade": "São Paulo|SP"})
+        self.assertEqual(response.context["destaque"], self.sabado)
+        self.assertIn(self.sabado, response.context["eventos_fim_de_semana"])
+        self.assertEqual(
+            response.context["proximos_eventos"], [self.hoje, self.segunda, self.segunda_tarde]
+        )
+        self.calendario.return_value = date(2030, 12, 12)
+        response = self.client.get(reverse("index"))
+        self.assertIsNone(response.context["destaque"])
+        self.assertEqual(response.context["proximos_eventos"], [])
+
+    def test_localidades_exatas_e_categorias_coerentes(self):
+        for rota in ("index", "eventos"):
+            with self.subTest(rota=rota):
+                url = reverse(rota)
+                contexto = self.client.get(url, {"localidade": "São Paulo|MG"}).context
+                self.assertEqual(contexto["localidades"][0], {"valor": "", "rotulo": "Todas as localidades"})
+                self.assertEqual(contexto["localidade_selecionada"], "São Paulo|MG")
+                self.assertEqual(contexto["localidade_nome"], "São Paulo – MG")
+                self.assertQuerySetEqual(contexto["eventos"], [self.outra_uf])
+                categorias = [self.arte] if rota == "index" else [self.arte, self.musica]
+                self.assertQuerySetEqual(contexto["categorias"], categorias)
+
+                token = next(
+                    item["valor"] for item in contexto["localidades"] if item["rotulo"] == "A|B% – SP"
+                )
+                self.assertNotEqual(token, "A|B%|SP")
+                contexto = self.client.get(url, {"localidade": token}).context
+                self.assertQuerySetEqual(contexto["eventos"], [self.cidade_especial])
+
+                contexto = self.client.get(url, {"localidade": "são paulo|mg"}).context
+                self.assertEqual(contexto["localidade_selecionada"], "")
+                self.assertEqual(contexto["localidade_nome"], "Todas as localidades")
+                self.assertIn(self.hoje, contexto["eventos"])
+                self.assertIn(self.outra_uf, contexto["eventos"])
+
+    def test_eventos_ordenam_datas_e_combinam_filtros_sem_alterar_alfabetica(self):
+        url = reverse("eventos")
+        local = {"localidade": "São Paulo|SP"}
+        cronologia = [
+            self.hoje, self.sabado, self.domingo, self.segunda, self.segunda_tarde,
+            self.ontem, self.passado,
+        ]
+        for filtros in (local, {**local, "ordem": "data"}):
+            contexto = self.client.get(url, filtros).context
+            self.assertEqual(contexto["ordem"], "data")
+            self.assertEqual(contexto["hoje"], self.hoje.dataEvento)
+            self.assertQuerySetEqual(contexto["eventos"], cronologia)
+
+        contexto = self.client.get(url, {**local, "ordem": "alfabetica"}).context
+        self.assertQuerySetEqual(contexto["eventos"], sorted(cronologia, key=lambda evento: evento.nome))
+        contexto = self.client.get(
+            url, {**local, "q": "  feSTival ", "categoria": self.musica.pk, "ordem": "data"}
+        ).context
+        self.assertEqual(contexto["q"], "feSTival")
+        self.assertEqual(contexto["categoria_selecionada"], str(self.musica.pk))
+        self.assertQuerySetEqual(contexto["eventos"], cronologia[1:5])
+        contexto = self.client.get(url, {**local, "categoria": self.arte.pk}).context
+        self.assertQuerySetEqual(contexto["eventos"], [])
+
+    def test_colecao_separa_hoje_de_encerrados_preservando_ordem_e_dono(self):
+        outro = get_user_model().objects.create_user(username="outro-agenda", email="outro@example.com")
+        self.outra_uf.usuario = outro
+        self.outra_uf.save(update_fields=["usuario"])
+        self.client.force_login(self.usuario)
+        contexto = self.client.get(reverse("meus_eventos"), {"ordem": "data"}).context
+        self.assertEqual(contexto["hoje"], self.hoje.dataEvento)
+        self.assertEqual(contexto["eventos_encerrados"], [self.passado, self.ontem])
+        self.assertEqual(
+            contexto["eventos_futuros"],
+            [self.hoje, self.sabado, self.domingo, self.segunda, self.segunda_tarde, self.cidade_especial],
+        )
+
+    def test_respostas_de_autenticacao_e_cadastro_conservam_contexto_e_erros(self):
+        filtros = "?localidade=S%C3%A3o+Paulo%7CSP"
+        login_url = reverse("login") + filtros
+        next_url = reverse("meus_eventos")
+        respostas = [
+            (self.client.get(login_url + f"&next={next_url}"), "form", None),
+            (
+                self.client.post(login_url, {"username": self.usuario.username, "password": "errada", "next": next_url}),
+                "form",
+                "__all__",
+            ),
+            (
+                self.client.post(reverse("cadastro") + filtros, {"username": "perfil-novo"}),
+                "cadastro_form",
+                "email",
+            ),
+        ]
+        self.assertEqual(respostas[0][0].context["next"], next_url)
+        self.assertEqual(respostas[1][0].context["next"], next_url)
+        for (response, _, _), modal in zip(
+            respostas, ("modal-login", "modal-login", "modal-cadastro"), strict=True
+        ):
+            with self.subTest(modal=modal):
+                outro_modal = "modal-cadastro" if modal == "modal-login" else "modal-login"
+                self.assertRegex(
+                    response.text,
+                    rf'<dialog\b[^>]*\bid="{modal}"[^>]*\bdata-auth-open-on-load\b',
+                )
+                self.assertNotRegex(
+                    response.text,
+                    rf'<dialog\b[^>]*\bid="{outro_modal}"[^>]*\bdata-auth-open-on-load\b',
+                )
+        self.assertRedirects(
+            self.client.post(login_url, {"username": self.usuario.username, "password": "senha-teste", "next": next_url}),
+            next_url,
+            fetch_redirect_response=False,
+        )
+        respostas.append(
+            (
+                self.client.post(reverse("cadastrar_evento") + filtros, {"nome": "Rascunho"}),
+                "evento_form",
+                "dataEvento",
+            )
+        )
+
+        for response, nome_formulario, erro in respostas:
+            with self.subTest(nome_formulario=nome_formulario, erro=erro):
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "home/index.html")
+                self.assertEqual(response.context["destaque"], self.sabado)
+                self.assertEqual(response.context["localidade_selecionada"], "São Paulo|SP")
+                form = response.context[nome_formulario]
+                self.assertEqual(form.is_bound, erro is not None)
+                if erro:
+                    self.assertIn(erro, form.errors)
+        self.assertEqual(respostas[-1][0].context["evento_form"]["nome"].value(), "Rascunho")
+        self.assertFalse(Evento.objects.filter(nome="Rascunho").exists())

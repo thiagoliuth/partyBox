@@ -1,88 +1,162 @@
 {% extends "base.html" %}
-
 {% block title %}Mural • PartyBoxd{% endblock %}
-
 {% block content %}
-<header class="page-heading">
-    <h1>Mural</h1>
-    <p>Eventos da região.</p>
-</header>
-<div class="home-layout grid gap-8 lg:grid-cols-[minmax(0,1fr)_230px]">
-    <section aria-labelledby="mural-titulo">
-        <div class="section-header">
-            <h2 id="mural-titulo">Eventos recentes</h2>
+<div class="aa-page aa-mural">
+    <section
+        class="aa-masthead {% if destaque %}aa-masthead-with-feature{% endif %}"
+        aria-labelledby="mural-titulo"
+    >
+        <div class="aa-masthead-copy">
+            <div class="aa-masthead-label">
+                <span class="aa-kicker">Mural</span>
+            </div>
+            <h1 id="mural-titulo">A cidade <em>em cartaz.</em></h1>
+            <p>Shows, festas, feiras e outros bons motivos pra sair de casa.</p>
+            <div class="aa-masthead-actions">
+                <a
+                    class="aa-button aa-button-primary"
+                    href="{% url 'eventos' %}{% if localidade_selecionada %}?localidade={{ localidade_selecionada|urlencode }}{% endif %}"
+                >
+                    Explorar eventos {% include "includes/after_hours_icon.html" with icon="arrow" only %}
+                </a>
+                {% include "includes/after_hours_create.html" with tone="outline" %}
+            </div>
         </div>
-        {% if eventos %}
-        <ul class="message-list">
-            {% for e in eventos %}
+        {% if destaque %}
+        <section class="aa-masthead-feature" aria-label="Em destaque">
+            {% include "home/includes/after_hours_event_card.html" with evento=destaque variante="feature" acao="mural" %}
+        </section>
+        {% endif %}
+    </section>
+
+    <form class="aa-locality" method="get" action="{% url 'index' %}">
+        <div class="aa-locality-heading">
+            {% include "includes/after_hours_icon.html" with icon="pin" only %}
+            <div>
+                <label class="aa-kicker" for="localidade-mural"
+                    >Localidade do mural</label
+                >
+                <p>{{ localidade_nome|default:"Todas as localidades" }}</p>
+            </div>
+        </div>
+        <div class="aa-locality-control">
+            <select class="aa-input" id="localidade-mural" name="localidade">
+                <option value="">Todas as localidades</option>
+                {% for localidade in localidades %}{% if localidade.valor %}
+                <option value="{{ localidade.valor }}" {% if localidade_selecionada == localidade.valor %}selected{% endif %}>
+                    {{ localidade.rotulo }}
+                </option>
+                {% endif %}{% endfor %}
+            </select>
+            <button type="submit" class="aa-button aa-button-outline">
+                Aplicar
+            </button>
+        </div>
+    </form>
+
+    <section class="aa-editorial-section" aria-labelledby="fim-de-semana">
+        <header class="aa-section-heading">
+            <div>
+                <p class="aa-kicker">Sábado e domingo</p>
+                <h2 id="fim-de-semana">Neste fim de semana</h2>
+            </div>
+        </header>
+        {% if eventos_fim_de_semana %}
+        <ul class="aa-card-grid aa-card-grid-compact">
+            {% for evento in eventos_fim_de_semana %}
             <li>
-                <article class="message">
-                    <header
-                        class="message-meta flex flex-wrap items-center gap-x-3 gap-y-1"
-                    >
-                        <span>Por <strong>{{ e.usuario }}</strong></span>
-                        <time datetime="{{ e.criada_em|date:'c' }}"
-                            >{{ e.dataEvento|date:"d/m/Y" }} . {{ e.horarioEvento|time:"H:i" }}</time
-                        >
-                        {% if e.categoria %}<span class="chip"
-                            >{{ e.categoria }}</span
-                        >{% endif %}
-                    </header>
-                    <h3>{{ e.cidade }} - {{ e.siglaEstado }}</h3>
-                    <div class="editorial message-copy">
-                        {{ e.descricao|linebreaksbr }} - {{ e.categoria}}
-                    </div>
-
-
-                </article>
+                {% include "home/includes/after_hours_event_card.html" with variante="compact" acao="mural" %}
             </li>
             {% endfor %}
         </ul>
         {% else %}
-        <div class="empty-state">
-            <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-            >
-                <path
-                    d="M5 4h14v13H9l-4 3V4Z"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linejoin="round"
-                />
-                <path
-                    d="M9 8h6m-6 4h4"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                />
-            </svg>
-            <h3>Nenhum evento cadastrado ainda.</h3>
-            <p>Os novos eventos aparecem aqui.</p>
-            {% if user.is_authenticated %}<a
-                href="{% url 'admin:home_evento_add' %}"
-                class="button button-primary"
-                >Cadastrar Evento</a
-            >{% endif %}
+        <div class="aa-empty">
+            <h3>Nada marcado para este fim de semana.</h3>
+            <p>
+                {% if localidade_selecionada %}Experimente outra localidade ou
+                confira as próximas datas.{% else %}Confira as próximas datas
+                para planejar sua saída.{% endif %}
+            </p>
         </div>
         {% endif %}
     </section>
-    <aside aria-labelledby="sobre-titulo">
-        <div class="section-header"><h2 id="sobre-titulo">O PartyBoxd</h2></div>
-        <p class="aside-copy">
-            Um projeto para descobrir e avaliar os eventos da sua região.
-        </p>
-        <a href="{% url 'sobre' %}" class="text-link"
-            >Sobre o projeto <span aria-hidden="true">→</span></a
-        >
-        <div class="aside-note">
-            <span class="eyebrow">Em desenvolvimento</span>
+
+    <section class="aa-editorial-section" aria-labelledby="proximos-eventos">
+        <header class="aa-section-heading">
+            <div>
+                <p class="aa-kicker">Mais pra frente</p>
+                <h2 id="proximos-eventos">Próximos eventos</h2>
+            </div>
+            <a
+                class="aa-text-link"
+                href="{% url 'eventos' %}{% if localidade_selecionada %}?localidade={{ localidade_selecionada|urlencode }}{% endif %}"
+            >
+                Ver a agenda {% include "includes/after_hours_icon.html" with icon="arrow" only %}
+            </a>
+        </header>
+        {% if proximos_eventos %}
+        <ul class="aa-card-grid aa-card-grid-posters">
+            {% for evento in proximos_eventos %}
+            <li>
+                {% include "home/includes/after_hours_event_card.html" with variante="poster" acao="mural" %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="aa-empty">
+            <h3>
+                {% if destaque or eventos_fim_de_semana %}
+                Ainda não há outras datas na agenda.
+                {% else %}
+                Ainda não há próximos eventos{% if localidade_selecionada %} nesta localidade{% endif %}.
+                {% endif %}
+            </h3>
             <p>
-                O mural já está disponível. Mais coisas posteriormente.
+                {% if localidade_selecionada %}Você pode ampliar a busca para
+                ver a agenda completa.{% else %}Conhece algo que vai acontecer?
+                Cadastre o evento no mural.{% endif %}
+            </p>
+            {% if localidade_selecionada %}
+            <a class="aa-text-link" href="{% url 'index' %}">
+                Ver todas as localidades {% include "includes/after_hours_icon.html" with icon="arrow" only %}
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <section
+        class="aa-editorial-section aa-categories"
+        aria-labelledby="categorias-mural"
+    >
+        <header class="aa-section-heading">
+            <div>
+                <p class="aa-kicker">Do seu jeito</p>
+                <h2 id="categorias-mural">Explore por categoria</h2>
+            </div>
+        </header>
+        {% if categorias %}
+        <ul class="aa-category-index">
+            {% for categoria in categorias %}
+            <li>
+                <a
+                    data-category="{{ categoria.tipo }}"
+                    href="{% url 'eventos' %}?categoria={{ categoria.pk }}{% if localidade_selecionada %}&amp;localidade={{ localidade_selecionada|urlencode }}{% endif %}"
+                >
+                    {{ categoria.get_tipo_display }} {% include "includes/after_hours_icon.html" with icon="diagonal" only %}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="aa-empty">
+            <h3>Sem categorias para explorar por aqui.</h3>
+            <p>
+                Quando houver eventos com categoria, você poderá filtrar a
+                agenda por aqui.
             </p>
         </div>
-    </aside>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}

@@ -1,0 +1,23 @@
+{% if icon == "brand" %}
+<svg class="aa-brand-mark" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
+    <path d="M2 7.5 7.5 2H14v9.5L8.5 17H2zm12 9 5.5-5.5H26v9.5L20.5 26H14zM18 2h8v5h-8zM2 21h8v5H2z"/>
+</svg>
+{% else %}
+<svg class="aa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    {% if icon == "home" %}<path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/>
+    {% elif icon == "explore" %}<circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/>
+    {% elif icon == "collection" %}<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 3v7m8-7v7M4 13h16"/>
+    {% elif icon == "plus" %}<path d="M12 5v14M5 12h14"/>
+    {% elif icon == "chevron" %}<path d="m6 9 6 6 6-6"/>
+    {% elif icon == "diagonal" %}<path d="M6 18 18 6M8 6h10v10"/>
+    {% elif icon == "arrow" %}<path d="M4 12h15m-6-6 6 6-6 6"/>
+    {% elif icon == "back" %}<path d="M20 12H5m6-6-6 6 6 6"/>
+    {% elif icon == "pin" %}<path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.4"/>
+    {% elif icon == "sun" %}<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19m0-14-1.5 1.5m-11 11L5 19"/>
+    {% elif icon == "moon" %}<path d="M21 12.8A9 9 0 0 1 11.2 3a9 9 0 1 0 9.8 9.8Z"/>
+    {% elif icon == "person" %}<circle cx="12" cy="8" r="3.5"/><path d="M5 20v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/>
+    {% elif icon == "search" %}<circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 5 5"/>
+    {% elif icon == "ticket" %}<path d="M3 6h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4zM15 6v2m0 3v2m0 3v2"/>
+    {% endif %}
+</svg>
+{% endif %}

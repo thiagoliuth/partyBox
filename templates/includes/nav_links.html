@@ -1,3 +1,12 @@
-<a href="{% url 'index' %}" {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>Início</a>
-<a href="{% url 'sobre' %}" {% if request.resolver_match.url_name == 'sobre' %}aria-current="page"{% endif %}>Sobre</a>
-<a href="{% url 'admin:index' %}" class="button button-secondary">Admin</a>
+<a class="aa-nav-link" href="{% url 'index' %}" {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>
+    {% include "includes/after_hours_icon.html" with icon="home" only %}<span>Início</span>
+</a>
+<a class="aa-nav-link" href="{% url 'eventos' %}" {% if request.resolver_match.url_name == 'eventos' %}aria-current="page"{% endif %}>
+    {% include "includes/after_hours_icon.html" with icon="explore" only %}<span class="aa-desktop-label">Explorar eventos</span><span class="aa-mobile-label">Explorar</span>
+</a>
+{% if user.is_authenticated %}
+<a class="aa-nav-link" href="{% url 'meus_eventos' %}" {% if request.resolver_match.url_name == 'meus_eventos' or request.resolver_match.url_name == 'editar_evento' %}aria-current="page"{% endif %}>
+    {% include "includes/after_hours_icon.html" with icon="collection" only %}<span>Meus eventos</span>
+</a>
+{% endif %}
+{% include "includes/after_hours_create.html" with placement="nav" %}

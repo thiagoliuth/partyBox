@@ -8,7 +8,7 @@
             <div class="form-field form-field-{{ field.name }}">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
-                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endif %}
         {% endfor %}
@@ -22,7 +22,7 @@
             <div class="form-field form-field-{{ field.name }}">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
-                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endif %}
         {% endfor %}
@@ -35,8 +35,8 @@
             {% if field.name == "linkSite" or field.name == "linkInstagram" or field.name == "thumbnail" %}
             <div class="form-field form-field-{{ field.name }}">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                {% if field.name == "thumbnail" %}<div class="aa-file-control">{{ field }}</div>{% else %}{{ field }}{% endif %}
+                {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endif %}
         {% endfor %}
@@ -44,7 +44,7 @@
             {% if field.name == "ehPago" or field.name == "ehPublico" %}
             <div class="form-field form-field-{{ field.name }}">
                 <label class="form-check-label" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
-                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endif %}
         {% endfor %}
@@ -58,7 +58,7 @@
             <div class="form-field form-field-{{ field.name }}">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
-                {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+                {% if field.errors %}<div class="form-error">{{ field.errors }}</div>{% endif %}
             </div>
             {% endif %}
         {% endfor %}

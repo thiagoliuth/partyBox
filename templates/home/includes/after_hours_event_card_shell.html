@@ -1,0 +1,27 @@
+<article class="aa-card aa-card-{{ variante }} aa-card-{{ acao }}{% if encerrado %} aa-card-ended{% endif %}" data-category="{{ evento.categoria.tipo|default:'outros' }}"{% if acao == 'eventos' %} id="evento-{{ evento.pk }}" tabindex="-1"{% endif %}>
+    {% if acao == "mural" %}
+        <a class="aa-card-face" href="{% url 'eventos' %}{% if localidade_selecionada %}?localidade={{ localidade_selecionada|urlencode }}{% endif %}#evento-{{ evento.pk }}">
+            {% include "home/includes/after_hours_event_card_face.html" %}
+        </a>
+    {% elif acao == "editar" %}
+        <a class="aa-card-face" href="{% url 'editar_evento' evento.pk %}">
+            {% include "home/includes/after_hours_event_card_face.html" %}
+        </a>
+    {% elif evento.descricao %}
+        <details class="aa-card-disclosure">
+            <summary class="aa-card-face">
+                {% include "home/includes/after_hours_event_card_face.html" %}
+            </summary>
+            <div class="aa-card-description">{{ evento.descricao|linebreaksbr }}</div>
+        </details>
+    {% else %}
+        <div class="aa-card-face">{% include "home/includes/after_hours_event_card_face.html" %}</div>
+    {% endif %}
+    {% if acao == "eventos" and evento.cupom_valido %}
+    <div class="aa-card-coupon">
+        <span class="aa-kicker">{% include "includes/after_hours_icon.html" with icon="ticket" only %} Tem cupom</span>
+        <p><strong>{{ evento.cupom_codigo }}</strong>{% if evento.cupom_descricao %} · {{ evento.cupom_descricao }}{% endif %}</p>
+        <p>Válido até <time datetime="{{ evento.cupom_dataExpiracao|default:evento.dataEvento|date:'Y-m-d' }}">{{ evento.cupom_dataExpiracao|default:evento.dataEvento|date:"d/m/Y" }}</time></p>
+    </div>
+    {% endif %}
+</article>

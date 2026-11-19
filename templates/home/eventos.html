@@ -1,76 +1,74 @@
 {% extends "base.html" %}
 
-{% block title %}Eventos • PartyBoxd{% endblock %}
+{% block title %}Explorar eventos • PartyBoxd{% endblock %}
 
 {% block content %}
-<header class="page-heading">
-    <h1>Eventos</h1>
-    <p>Descubra o que acontece na sua região.</p>
-</header>
+<div class="aa-page aa-discovery">
+    <header class="aa-page-heading">
+        <p class="aa-kicker">Agenda aberta</p>
+        <h1>Explorar <em>eventos.</em></h1>
+        <p>Encontre seu próximo rolê por nome, localidade ou categoria.</p>
+    </header>
 
-<form class="event-filters" method="get" action="{% url 'eventos' %}">
-    <div class="event-filter-field">
-        <label for="busca-eventos">Buscar por nome</label>
-        <input id="busca-eventos" type="search" name="q" value="{{ q }}" placeholder="Ex.: show, feira...">
-    </div>
-    <div class="event-filter-field">
-        <label for="categoria-eventos">Categoria</label>
-        <select id="categoria-eventos" name="categoria">
-            <option value="">Todas as categorias</option>
-            {% for categoria in categorias %}
-            <option value="{{ categoria.pk }}" {% if categoria_selecionada == categoria.pk|stringformat:"s" %}selected{% endif %}>{{ categoria.get_tipo_display }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="event-filter-field">
-        <label for="ordem-eventos">Ordenar por</label>
-        <select id="ordem-eventos" name="ordem">
-            <option value="alfabetica" {% if ordem == "alfabetica" %}selected{% endif %}>Nome (A–Z)</option>
-            <option value="data" {% if ordem == "data" %}selected{% endif %}>Data do evento</option>
-        </select>
-    </div>
-    <div class="event-filter-actions">
-        <button class="button button-primary" type="submit">Filtrar</button>
-        <a class="text-link" href="{% url 'eventos' %}">Limpar</a>
-    </div>
-</form>
-
-{% if eventos %}
-<section class="event-grid" aria-label="Lista de eventos">
-    {% for evento in eventos %}
-    <article class="event-card">
-        {% if evento.thumbnail %}
-        <img class="event-card-image" src="{{ evento.thumbnail.url }}" alt="Imagem do evento {{ evento.nome }}">
-        {% else %}
-        <div class="event-card-placeholder" aria-hidden="true"><span>PartyBoxd</span></div>
-        {% endif %}
-        <div class="event-card-content">
-            <div class="event-card-heading">
-                <h2>{{ evento.nome }}</h2>
-                {% if evento.categoria %}<span class="chip">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
+    <form class="aa-filters" method="get" action="{% url 'eventos' %}">
+        <div class="aa-filter-fields">
+            <div class="aa-field aa-field-search">
+                <label for="busca-eventos">Buscar por nome</label>
+                <div class="aa-search-control">{% include "includes/after_hours_icon.html" with icon="search" only %}
+                    <input class="aa-input" id="busca-eventos" type="search" name="q" value="{{ q }}" placeholder="Ex.: samba, feira, cinema">
+                </div>
             </div>
-            <p class="event-card-location">{{ evento.cidade }}, {{ evento.siglaEstado }}</p>
-            <p class="event-card-date"><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}">{{ evento.dataEvento|date:"d/m/Y" }}</time> · {{ evento.horarioEvento|time:"H:i" }}</p>
-            {% if evento.cupom_valido %}
-            <div class="event-coupon">
-                <span class="chip chip-coupon">Tem cupom</span>
-                <p><strong>{{ evento.cupom_codigo }}</strong> · {{ evento.cupom_descricao }}</p>
-                <p>Válido até {{ evento.cupom_dataExpiracao|default:evento.dataEvento|date:"d/m/Y" }}</p>
+            <div class="aa-field aa-field-locality">
+                <label for="localidade-eventos">Localidade</label>
+                <select class="aa-input" id="localidade-eventos" name="localidade">
+                    <option value="">Todas as localidades</option>
+                    {% for localidade in localidades %}{% if localidade.valor %}<option value="{{ localidade.valor }}" {% if localidade_selecionada == localidade.valor %}selected{% endif %}>{{ localidade.rotulo }}</option>{% endif %}{% endfor %}
+                </select>
             </div>
-            {% endif %}
-            <div class="event-card-meta">
-                <span class="event-price">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
-                <span class="event-rating" aria-label="Média {{ evento.mediaClassificacao|floatformat:1 }}, {{ evento.votosPositivos|add:evento.votosNegativos }} votos">★ {{ evento.mediaClassificacao|floatformat:1 }} · {{ evento.votosPositivos|add:evento.votosNegativos }} votos</span>
+            <div class="aa-field aa-field-order">
+                <label for="ordem-eventos">Ordenar por</label>
+                <select class="aa-input" id="ordem-eventos" name="ordem">
+                    <option value="data" {% if ordem == "data" %}selected{% endif %}>Data do evento</option>
+                    <option value="alfabetica" {% if ordem == "alfabetica" %}selected{% endif %}>Nome (A–Z)</option>
+                </select>
+            </div>
+            <div class="aa-filter-actions">
+                <button class="aa-button aa-button-primary" type="submit" name="categoria" value="{{ categoria_selecionada }}">Filtrar</button>
+                {% if q or categoria_selecionada or localidade_selecionada or ordem == 'alfabetica' %}<a class="aa-text-link" href="{% url 'eventos' %}">Limpar</a>{% endif %}
             </div>
         </div>
-    </article>
-    {% endfor %}
-</section>
-{% else %}
-<div class="empty-state">
-    <h2>Nenhum evento encontrado.</h2>
-    <p>{% if q or categoria_selecionada %}Tente ajustar os filtros ou limpar a busca.{% else %}Ainda não há eventos cadastrados. Volte em breve para descobrir novidades.{% endif %}</p>
-    {% if q or categoria_selecionada %}<a class="button button-secondary" href="{% url 'eventos' %}">Limpar filtros</a>{% endif %}
+        {% if categorias %}
+        <fieldset class="aa-category-field">
+            <legend class="aa-kicker">Categorias</legend>
+            <div class="aa-filter-chips">
+                <button type="submit" name="categoria" value="" {% if not categoria_selecionada %}aria-current="true"{% endif %}>Todas</button>
+                {% for categoria in categorias %}
+                <button type="submit" name="categoria" value="{{ categoria.pk }}" data-category="{{ categoria.tipo }}" {% if categoria_selecionada == categoria.pk|stringformat:"s" %}aria-current="true"{% endif %}>{{ categoria.get_tipo_display }}</button>
+                {% endfor %}
+            </div>
+        </fieldset>
+        {% endif %}
+    </form>
+
+    <section class="aa-editorial-section aa-discovery-results" aria-labelledby="resultados-eventos">
+        <header class="aa-section-heading">
+            <div>
+                <p class="aa-kicker">{{ localidade_nome|default:"Todas as localidades" }}</p>
+                <h2 id="resultados-eventos">{% if q %}Resultados da busca{% else %}Na agenda{% endif %}</h2>
+            </div>
+            {% if eventos %}{% with total=eventos|length %}<span class="aa-result-count">{{ total }} {% if total == 1 %}evento{% else %}eventos{% endif %}</span>{% endwith %}{% endif %}
+        </header>
+        {% if eventos %}
+        <ul class="aa-card-grid aa-card-grid-posters">
+            {% for evento in eventos %}<li>{% include "home/includes/after_hours_event_card.html" with variante="poster" acao="eventos" %}</li>{% endfor %}
+        </ul>
+        {% else %}
+        <div class="aa-empty">
+            <h3>Nenhum evento encontrado.</h3>
+            <p>{% if q or categoria_selecionada or localidade_selecionada %}Tente outro nome ou amplie a busca para outras categorias e localidades.{% else %}Ainda não há eventos publicados. Volte em breve ou compartilhe um evento que vai acontecer.{% endif %}</p>
+            {% if q or categoria_selecionada or localidade_selecionada %}<a class="aa-button aa-button-outline" href="{% url 'eventos' %}">Limpar filtros</a>{% else %}{% include "includes/after_hours_create.html" %}{% endif %}
+        </div>
+        {% endif %}
+    </section>
 </div>
-{% endif %}
 {% endblock %}

@@ -1,4 +1,4 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
 from . import views
 
@@ -12,10 +12,7 @@ urlpatterns = [
     path("cadastrar-evento/", views.cadastrar_evento, name="cadastrar_evento"),
     path(
         "entrar/",
-        LoginView.as_view(
-            template_name="home/index.html",
-            extra_context={"eventos": views.Evento.objects.all()},
-        ),
+        views.MuralLoginView.as_view(template_name="home/index.html"),
         name="login",
     ),
     path("sair/", LogoutView.as_view(), name="logout"),

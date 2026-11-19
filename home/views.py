@@ -1,18 +1,84 @@
-from django.contrib import messages
+from datetime import timedelta
 
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.db.models import Case, When
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import EventoForm, UsuarioCreationForm
 from .models import Categoria, Evento
 
 
+def _eventos_por_localidade(request):
+    eventos = Evento.objects.select_related("categoria", "usuario")
+    pares = eventos.exclude(cidade="").exclude(siglaEstado="").values_list(
+        "cidade", "siglaEstado"
+    ).order_by("cidade", "siglaEstado").distinct()
+    todas = "Todas as localidades"
+    localidades = [{"valor": "", "rotulo": todas}]
+    selecionada = ""
+    nome = todas
+    pedida = request.GET.get("localidade", "")
+    for cidade, estado in pares:
+        # Preserve the city/state boundary even for text containing '%' or '|'.
+        valor = "|".join(parte.replace("%", "%25").replace("|", "%7C") for parte in (cidade, estado))
+        rotulo = f"{cidade} – {estado}"
+        localidades.append({"valor": valor, "rotulo": rotulo})
+        if pedida == valor:
+            selecionada = valor
+            nome = rotulo
+            eventos = eventos.filter(cidade=cidade, siglaEstado=estado)
+
+    return eventos, {
+        "localidades": localidades,
+        "localidade_selecionada": selecionada,
+        "localidade_nome": nome,
+    }
+
+
+def _mural_context(request):
+    eventos, localidade = _eventos_por_localidade(request)
+    hoje = timezone.localdate()
+    sabado = hoje + timedelta(days=5 - hoje.weekday())
+    domingo = sabado + timedelta(days=1)
+    futuros = list(eventos.filter(dataEvento__gte=hoje).order_by("dataEvento", "horarioEvento", "pk"))
+    destaque = futuros[0] if futuros else None
+    if destaque:
+        limite_foto = destaque.dataEvento + timedelta(days=7)
+        destaque = next(
+            (evento for evento in futuros if evento.thumbnail and evento.dataEvento <= limite_foto),
+            destaque,
+        )
+
+    return {
+        **localidade,
+        "eventos": eventos,
+        "hoje": hoje,
+        "categorias": Categoria.objects.filter(pk__in=eventos.order_by().values("categoria_id")),
+        "destaque": destaque,
+        # Keep all real weekend events even when one is also featured.
+        "eventos_fim_de_semana": [
+            evento for evento in futuros if sabado <= evento.dataEvento <= domingo
+        ],
+        "proximos_eventos": [
+            evento for evento in futuros
+            if not sabado <= evento.dataEvento <= domingo and evento != destaque
+        ],
+    }
+
+
+class MuralLoginView(LoginView):
+    def get_context_data(self, **kwargs):
+        return {**_mural_context(self.request), **super().get_context_data(**kwargs)}
+
+
 def index(request):
-    eventos = Evento.objects.all()
-    return render(request, "home/index.html", {"eventos": eventos})
+    return render(request, "home/index.html", _mural_context(request))
 
 
 def sobre(request):
@@ -22,26 +88,34 @@ def sobre(request):
 def evento_list(request):
     q = request.GET.get("q", "").strip()
     categoria_id = request.GET.get("categoria", "")
-    ordem = request.GET.get("ordem", "alfabetica")
+    ordem = request.GET.get("ordem", "data")
+    hoje = timezone.localdate()
 
-    eventos = Evento.objects.select_related("categoria", "usuario")
+    eventos, localidade = _eventos_por_localidade(request)
     if q:
         eventos = eventos.filter(nome__icontains=q)
     if categoria_id.isdecimal():
         eventos = eventos.filter(categoria_id=categoria_id)
 
     if ordem == "data":
-        eventos = eventos.order_by("dataEvento", "horarioEvento")
+        eventos = eventos.order_by(
+            Case(When(dataEvento__gte=hoje, then=0), default=1),
+            Case(When(dataEvento__gte=hoje, then="dataEvento")),
+            Case(When(dataEvento__gte=hoje, then="horarioEvento")),
+            "-dataEvento", "-horarioEvento", "pk",
+        )
     else:
         ordem = "alfabetica"
-        eventos = eventos.order_by("nome")
+        eventos = eventos.order_by("nome", "pk")
 
     return render(
         request,
         "home/eventos.html",
         {
+            **localidade,
             "eventos": eventos,
             "categorias": Categoria.objects.all(),
+            "hoje": hoje,
             "q": q,
             "categoria_selecionada": categoria_id,
             "ordem": ordem,
@@ -63,7 +137,21 @@ def meus_eventos(request):
         .select_related("categoria")
         .order_by(*ordenacoes[ordem])
     )
-    return render(request, "home/meus_eventos.html", {"eventos": eventos, "ordem": ordem})
+    hoje = timezone.localdate()
+    futuros, encerrados = [], []
+    for evento in eventos:
+        (futuros if evento.dataEvento >= hoje else encerrados).append(evento)
+    return render(
+        request,
+        "home/meus_eventos.html",
+        {
+            "eventos": eventos,
+            "ordem": ordem,
+            "hoje": hoje,
+            "eventos_futuros": futuros,
+            "eventos_encerrados": encerrados,
+        },
+    )
 
 
 @login_required
@@ -101,7 +189,7 @@ def cadastrar_evento(request):
         evento.save()
         return redirect("index")
 
-    return render(request, "home/index.html", {"eventos": Evento.objects.all(), "evento_form": form})
+    return render(request, "home/index.html", {**_mural_context(request), "evento_form": form})
 
 
 def cadastro(request):
@@ -120,5 +208,5 @@ def cadastro(request):
     return render(
         request,
         "home/index.html",
-        {"eventos": Evento.objects.all(), "cadastro_form": form},
+        {**_mural_context(request), "cadastro_form": form},
     )

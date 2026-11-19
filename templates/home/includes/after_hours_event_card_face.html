@@ -1,0 +1,36 @@
+<span class="aa-card-art {% if evento.thumbnail %}aa-card-art-photo{% else %}aa-card-art-type{% endif %}">
+    {% if evento.thumbnail %}
+    <img src="{{ evento.thumbnail.url }}" alt="" {% if variante == 'feature' %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+    {% else %}
+    <span class="aa-poster-initial" aria-hidden="true">{{ evento.categoria.get_tipo_display|default:evento.nome|slice:":1"|upper }}</span>
+    {% endif %}
+    {% if variante == "feature" %}<span class="aa-feature-label aa-kicker">Em destaque</span>{% endif %}
+    <time class="aa-date-ticket" datetime="{{ evento.dataEvento|date:'Y-m-d' }}T{{ evento.horarioEvento|time:'H:i' }}">
+        <span aria-hidden="true"><b>{{ evento.dataEvento|date:"d" }}</b>{{ evento.dataEvento|date:"M" }}</span>
+        <span class="aa-sr-only">{{ evento.dataEvento|date:"j \d\e F \d\e Y" }}, às {{ evento.horarioEvento|time:"H:i" }}</span>
+    </time>
+    {% if encerrado %}<span class="aa-ended-badge">Encerrado</span>{% endif %}
+</span>
+<span class="aa-card-body">
+    {% if evento.categoria %}<span class="aa-category-badge">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
+    {% if variante == "feature" %}<span class="aa-card-title" role="heading" aria-level="2">{{ evento.nome }}</span>{% else %}<span class="aa-card-title" role="heading" aria-level="3">{{ evento.nome }}</span>{% endif %}
+    <span class="aa-card-location">{{ evento.cidade }}{% if evento.siglaEstado %} · {{ evento.siglaEstado }}{% endif %}<span aria-hidden="true"> / {{ evento.horarioEvento|time:"H\hi" }}</span></span>
+    {% if variante == "feature" and evento.descricao %}<span class="aa-feature-description">{{ evento.descricao }}</span>{% endif %}
+    <span class="aa-card-foot">
+        <span class="aa-price {% if not evento.ehPago %}aa-price-free{% endif %}">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
+        {% if acao == "editar" %}
+            <span class="aa-card-action">Editar {% include "includes/after_hours_icon.html" with icon="diagonal" only %}<span class="aa-sr-only"> — {{ evento.nome }}</span></span>
+        {% else %}
+            {% with votos=evento.votosPositivos|add:evento.votosNegativos %}
+                {% if votos %}<span class="aa-rating" aria-label="Nota {{ evento.mediaClassificacao|floatformat:1 }} · {{ votos }} {% if votos == 1 %}voto{% else %}votos{% endif %}"><span aria-hidden="true">★</span> {{ evento.mediaClassificacao|floatformat:1 }} <span class="aa-rating-votes">· {{ votos }} {% if votos == 1 %}voto{% else %}votos{% endif %}</span></span>{% endif %}
+            {% endwith %}
+            {% if variante == "feature" %}
+                <span class="aa-card-action">Ver na agenda {% include "includes/after_hours_icon.html" with icon="diagonal" only %}</span>
+            {% elif acao == "eventos" and evento.descricao %}
+                <span class="aa-card-action"><span class="aa-card-action-closed">Descrição</span><span class="aa-card-action-open">Fechar</span> {% include "includes/after_hours_icon.html" with icon="chevron" only %}</span>
+            {% elif acao == "mural" %}
+                <span class="aa-card-action" aria-hidden="true">{% include "includes/after_hours_icon.html" with icon="diagonal" only %}</span>
+            {% endif %}
+        {% endif %}
+    </span>
+</span>

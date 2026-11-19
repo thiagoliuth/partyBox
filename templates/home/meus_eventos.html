@@ -3,56 +3,64 @@
 {% block title %}Meus eventos • PartyBoxd{% endblock %}
 
 {% block content %}
-{% if messages %}
-<div class="event-messages" role="status" aria-live="polite">
-    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
-</div>
-{% endif %}
-<header class="page-heading">
-    <h1>Meus eventos</h1>
-    <p>Gerencie os eventos que você cadastrou.</p>
-</header>
-
-<form class="event-filters meus-eventos-filters" method="get">
-    <div class="event-filter-field">
-        <label for="ordem-meus-eventos">Ordenar por</label>
-        <select id="ordem-meus-eventos" name="ordem" onchange="this.form.submit()">
-            <option value="nome" {% if ordem == "nome" %}selected{% endif %}>Nome (A–Z)</option>
-            <option value="data" {% if ordem == "data" %}selected{% endif %}>Data (crescente)</option>
-        </select>
+<div class="aa-page aa-collection">
+    {% if messages %}
+    <div class="aa-messages" role="status">
+        {% for message in messages %}<p>{{ message }}</p>{% endfor %}
     </div>
-    <noscript><button class="button button-primary" type="submit">Aplicar ordenação</button></noscript>
-</form>
-
-{% if eventos %}
-<section class="event-grid" aria-label="Meus eventos cadastrados">
-    {% for evento in eventos %}
-    <article class="event-card">
-        {% if evento.thumbnail %}
-        <img class="event-card-image" src="{{ evento.thumbnail.url }}" alt="Imagem do evento {{ evento.nome }}">
-        {% else %}
-        <div class="event-card-placeholder" aria-hidden="true"><span>PartyBoxd</span></div>
-        {% endif %}
-        <div class="event-card-content">
-            <div class="event-card-heading">
-                <h2>{{ evento.nome }}</h2>
-                {% if evento.categoria %}<span class="chip">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
-            </div>
-            <p class="event-card-location">{{ evento.cidade }}, {{ evento.siglaEstado }}</p>
-            <p class="event-card-date"><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}">{{ evento.dataEvento|date:"d/m/Y" }}</time> · {{ evento.horarioEvento|time:"H:i" }}</p>
-            <div class="event-card-meta">
-                <span class="event-price">{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</span>
-                <a class="text-link" href="{% url 'editar_evento' evento.pk %}">Editar</a>
-            </div>
+    {% endif %}
+    <header class="aa-page-heading aa-collection-heading">
+        <div>
+            <p class="aa-kicker">Sua agenda</p>
+            <h1>Meus <em>eventos.</em></h1>
+            <p>Encontre e edite os eventos que você cadastrou.</p>
         </div>
-    </article>
-    {% endfor %}
-</section>
-{% else %}
-<div class="empty-state">
-    <h2>Você ainda não cadastrou eventos.</h2>
-    <p>Quando cadastrar um evento, ele aparecerá aqui para você gerenciar.</p>
-    <button class="button button-primary" type="button" data-evento-open aria-haspopup="dialog">Cadastrar Evento</button>
+        {% if eventos %}{% include "includes/after_hours_create.html" %}{% endif %}
+    </header>
+
+    <form class="aa-collection-filter" method="get" action="{% url 'meus_eventos' %}">
+        <div class="aa-field">
+            <label for="ordem-meus-eventos">Ordenar por</label>
+            <select class="aa-input" id="ordem-meus-eventos" name="ordem">
+                <option value="nome" {% if ordem == "nome" %}selected{% endif %}>Nome (A–Z)</option>
+                <option value="data" {% if ordem == "data" %}selected{% endif %}>Data (crescente)</option>
+            </select>
+        </div>
+        <button class="aa-button aa-button-outline" type="submit">Aplicar</button>
+    </form>
+
+    {% if eventos %}
+    <section class="aa-editorial-section aa-collection-section" aria-labelledby="meus-proximos">
+        <header class="aa-section-heading">
+            <div><p class="aa-kicker">Em cartaz</p><h2 id="meus-proximos">Acontecem em breve</h2></div>
+        </header>
+        {% if eventos_futuros %}
+        <ul class="aa-card-grid aa-card-grid-collection">
+            {% for evento in eventos_futuros %}<li>{% include "home/includes/after_hours_event_card.html" with variante="compact" acao="editar" %}</li>{% endfor %}
+        </ul>
+        {% else %}
+        <div class="aa-empty"><h3>Nenhum evento marcado.</h3><p>Seus próximos eventos vão aparecer aqui.</p></div>
+        {% endif %}
+    </section>
+
+    <section class="aa-editorial-section aa-collection-section" aria-labelledby="meus-encerrados">
+        <header class="aa-section-heading">
+            <div><p class="aa-kicker">Arquivo</p><h2 id="meus-encerrados">Já encerrados</h2></div>
+        </header>
+        {% if eventos_encerrados %}
+        <ul class="aa-card-grid aa-card-grid-collection">
+            {% for evento in eventos_encerrados %}<li>{% include "home/includes/after_hours_event_card.html" with variante="compact" acao="editar" %}</li>{% endfor %}
+        </ul>
+        {% else %}
+        <div class="aa-empty"><h3>Nenhum evento encerrado.</h3><p>Os eventos que já aconteceram ficam neste arquivo.</p></div>
+        {% endif %}
+    </section>
+    {% else %}
+    <div class="aa-empty aa-collection-empty">
+        <h2>Você ainda não cadastrou eventos.</h2>
+        <p>Cadastre o primeiro para incluí-lo na sua agenda.</p>
+        {% include "includes/after_hours_create.html" %}
+    </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

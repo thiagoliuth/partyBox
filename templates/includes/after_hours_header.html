@@ -1,0 +1,45 @@
+<header class="aa-header">
+    <div class="aa-width aa-header-inner">
+        <a href="{% url 'index' %}" class="aa-brand" aria-label="PartyBoxd — início">
+            {% include "includes/after_hours_icon.html" with icon="brand" only %}<span>PartyBoxd</span>
+        </a>
+        <nav class="aa-navigation" aria-label="Navegação principal">
+            {% include "includes/nav_links.html" %}
+        </nav>
+        <details class="aa-account" data-aa-account>
+            <summary>
+                {% if user.is_authenticated %}
+                <span class="aa-avatar" aria-hidden="true">{{ user.username|slice:":1"|upper }}</span><span class="aa-account-name">Conta</span>
+                {% else %}
+                {% include "includes/after_hours_icon.html" with icon="person" only %}<span>Conta</span>
+                {% endif %}
+                {% include "includes/after_hours_icon.html" with icon="chevron" only %}
+            </summary>
+            <div class="aa-account-panel">
+                {% if user.is_authenticated %}
+                <div class="aa-account-identity"><span class="aa-kicker">Sua conta</span><strong>@{{ user.username }}</strong></div>
+                {% else %}
+                <button class="aa-account-action" type="button" data-auth-open="modal-login" aria-haspopup="dialog">Entrar</button>
+                <button class="aa-account-action" type="button" data-auth-open="modal-cadastro" aria-haspopup="dialog">Criar conta</button>
+                {% endif %}
+                <div class="aa-account-theme">
+                    <span class="aa-kicker">Aparência</span>
+                    <div class="aa-theme-options" role="group" aria-label="Tema">
+                        <button type="button" data-theme-set="light" aria-pressed="false">{% include "includes/after_hours_icon.html" with icon="sun" only %} Claro</button>
+                        <button type="button" data-theme-set="dark" aria-pressed="false">{% include "includes/after_hours_icon.html" with icon="moon" only %} Escuro</button>
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                    <a class="aa-account-action" href="{% url 'admin:index' %}">
+                        {% if user.is_staff %}Administração{% else %}Entrar no admin{% endif %}
+                        {% include "includes/after_hours_icon.html" with icon="diagonal" only %}
+                    </a>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="aa-account-action" type="submit">Sair</button>
+                    </form>
+                {% endif %}
+            </div>
+        </details>
+    </div>
+</header>

@@ -1,0 +1,20 @@
+{% extends "admin/login.html" %}
+
+{% block usertools %}
+    <div class="pb-admin-login-links">
+        {% if site_url %}
+            <a href="{{ site_url }}">{% include "includes/after_hours_icon.html" with icon="back" only %} Voltar ao site</a>
+        {% endif %}
+        {% include "admin/color_theme_toggle.html" %}
+    </div>
+{% endblock %}
+
+{% block content_title %}
+    <p class="aa-kicker pb-admin-login-kicker">Acesso da equipe</p>
+    <h1>Entrar no painel</h1>
+    <p class="pb-admin-login-intro">Esta área é reservada à equipe do PartyBoxd.</p>
+{% endblock %}
+
+{% block content %}
+    <div class="pb-admin-login-fields">{{ block.super }}</div>
+{% endblock %}

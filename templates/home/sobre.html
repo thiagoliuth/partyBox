@@ -3,47 +3,29 @@
 {% block title %}Sobre o PartyBoxd{% endblock %}
 
 {% block content %}
-<article class="about-page">
-    <header class="page-heading">
-        <h1>Sobre o PartyBoxd</h1>
-        <p>Eventos da sua região e experiências de quem foi.</p>
+<article class="aa-page aa-about">
+    <header class="aa-page-heading">
+        <p class="aa-kicker">Sobre o projeto</p>
+        <h1>Sobre o <em>PartyBoxd.</em></h1>
+        <p>Uma agenda pra descobrir o que acontece na cidade.</p>
     </header>
-    <section aria-labelledby="proposta-titulo">
-        <div class="section-header">
-            <h2 id="proposta-titulo">A proposta</h2>
-        </div>
-        <p class="editorial">
-            O PartyBoxd é um projeto de Programação Web para encontrar festas,
-            shows e outros eventos, participar e depois avaliar a experiência.
-        </p>
-        <p class="editorial">
-            O projeto está em desenvolvimento. Hoje, o mural reúne mensagens; as
-            próximas etapas trazem o cadastro e a avaliação dos eventos.
-        </p>
-    </section>
-    <section class="about-details" aria-labelledby="projeto-titulo">
-        <div class="section-header"><h2 id="projeto-titulo">O projeto</h2></div>
-        <dl>
-            <div>
-                <dt>Desenvolvimento</dt>
-                <dd>Luiz Victor, Thalles Felipe e Thiago Ayolphi Liuth</dd>
-            </div>
-            <div>
-                <dt>Disciplina</dt>
-                <dd>Programação Web · Ciência da Computação</dd>
-            </div>
-            <div>
-                <dt>Universidade</dt>
-                <dd>Universidade Federal de Ouro Preto · 2026</dd>
-            </div>
-            <div>
-                <dt>Tecnologias</dt>
-                <dd>Django, SQLite, Tailwind CSS e Docker</dd>
-            </div>
-        </dl>
-    </section>
-    <a href="{% url 'index' %}" class="text-link"
-        ><span aria-hidden="true">←</span> Voltar ao mural</a
-    >
+    <div class="aa-about-content">
+        <section aria-labelledby="proposta-titulo">
+            <p class="aa-kicker">A ideia</p>
+            <h2 id="proposta-titulo">O que tem pra fazer?</h2>
+            <p>O PartyBoxd reúne festas, shows, feiras e outros eventos num só lugar. Escolha uma localidade para ver o que vem por aí ou cadastre um evento para compartilhar com outras pessoas.</p>
+        </section>
+        <section aria-labelledby="projeto-titulo">
+            <p class="aa-kicker">Créditos</p>
+            <h2 id="projeto-titulo">Quem fez</h2>
+            <dl>
+                <div><dt>Desenvolvimento</dt><dd>Luiz Victor, Thalles Felipe e Thiago Ayolphi Liuth</dd></div>
+                <div><dt>Disciplina</dt><dd>Programação Web · Ciência da Computação</dd></div>
+                <div><dt>Universidade</dt><dd>Universidade Federal de Ouro Preto · 2026</dd></div>
+                <div><dt>Tecnologias</dt><dd>Django, SQLite, Tailwind CSS e Docker</dd></div>
+            </dl>
+        </section>
+    </div>
+    <a href="{% url 'index' %}" class="aa-text-link">{% include "includes/after_hours_icon.html" with icon="back" only %} Voltar ao mural</a>
 </article>
 {% endblock %}

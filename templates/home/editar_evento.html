@@ -3,22 +3,37 @@
 {% block title %}Editar evento • PartyBoxd{% endblock %}
 
 {% block content %}
-<header class="page-heading">
-    <h1>Editar evento</h1>
-    <p>Atualize as informações de {{ evento.nome }}.</p>
-</header>
+<div class="aa-page aa-edit">
+    <header class="aa-page-heading">
+        <a class="aa-text-link" href="{% url 'meus_eventos' %}">{% include "includes/after_hours_icon.html" with icon="back" only %} Meus eventos</a>
+        <h1>Editar <em>evento.</em></h1>
+        <p>Atualize as informações de <strong>{{ evento.nome }}</strong>.</p>
+    </header>
 
-<form class="evento-form evento-edit-form" method="post" action="{% url 'editar_evento' evento.pk %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% include "home/includes/evento_form_fields.html" with form=form %}
-    <footer class="evento-form-actions">
-        <a class="button button-secondary" href="{% url 'meus_eventos' %}">Cancelar</a>
-        <button class="button button-primary" type="submit">Salvar alterações</button>
-    </footer>
-</form>
+    <form class="aa-form aa-edit-form" method="post" action="{% url 'editar_evento' evento.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="aa-edit-fields">
+            {% if form.errors %}<p class="aa-form-feedback" role="alert">Revise os dados do evento antes de salvar.</p>{% endif %}
+            {% include "home/includes/evento_form_fields.html" with form=form %}
+        </div>
+        <footer class="aa-form-actions">
+            <a class="aa-button aa-button-outline" href="{% url 'meus_eventos' %}">Cancelar</a>
+            <button class="aa-button aa-button-primary" type="submit">Salvar alterações {% include "includes/after_hours_icon.html" with icon="arrow" only %}</button>
+        </footer>
+    </form>
 
-<form class="evento-delete-form" method="post" action="{% url 'excluir_evento' evento.pk %}" onsubmit="return confirm('Excluir este evento? Esta ação não pode ser desfeita.');">
-    {% csrf_token %}
-    <button class="button evento-delete-button" type="submit">Excluir evento</button>
-</form>
+    <section class="aa-edit-danger" aria-labelledby="exclusao-titulo">
+        <div>
+            <h2 id="exclusao-titulo">Exclusão definitiva</h2>
+            <p>Depois de excluir, não é possível recuperar este evento.</p>
+        </div>
+        <form method="post" action="{% url 'excluir_evento' evento.pk %}" onsubmit="return confirm('Excluir este evento? Esta ação não pode ser desfeita.');">
+            {% csrf_token %}
+            <button class="aa-button aa-button-danger" type="submit">
+                <svg class="aa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7"/></svg>
+                Excluir evento
+            </button>
+        </form>
+    </section>
+</div>
 {% endblock %}

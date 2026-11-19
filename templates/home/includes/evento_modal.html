@@ -1,18 +1,15 @@
-<dialog class="evento-dialog" id="cadastro-evento" aria-labelledby="cadastro-evento-titulo" {% if evento_form.errors %}data-evento-open-on-load{% endif %}>
-    <div class="evento-dialog-panel">
-        <header class="evento-dialog-header">
-            <div>
-                <p class="eyebrow">Compartilhe com a comunidade</p>
-                <h2 id="cadastro-evento-titulo">Cadastrar evento</h2>
-            </div>
-            <button class="evento-dialog-close" type="button" data-evento-close aria-label="Fechar cadastro">×</button>
-        </header>
-        <form class="evento-form" method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
+<dialog class="aa-dialog" id="cadastro-evento" aria-labelledby="cadastro-evento-titulo" {% if evento_form.errors %}data-evento-open-on-load{% endif %}>
+    <div class="aa-dialog-panel">
+        {% include "home/includes/after_hours_dialog_header.html" with chamada="Compartilhe com a comunidade" titulo="Cadastrar evento" titulo_id="cadastro-evento-titulo" fechar="Fechar cadastro" evento=True only %}
+        <form class="aa-form aa-dialog-form" method="post" action="{% url 'cadastrar_evento' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            {% include "home/includes/evento_form_fields.html" with form=evento_form %}
-            <footer class="evento-form-actions">
-                <button class="button button-secondary" type="button" data-evento-close>Cancelar</button>
-                <button class="button button-primary" type="submit">Publicar evento</button>
+            <div class="aa-dialog-fields" tabindex="-1">
+                {% if evento_form.errors %}<p class="aa-form-feedback" role="alert">Revise os dados do evento antes de publicar.</p>{% endif %}
+                {% include "home/includes/evento_form_fields.html" with form=evento_form %}
+            </div>
+            <footer class="aa-form-actions">
+                <button class="aa-button aa-button-outline" type="button" data-evento-close>Cancelar</button>
+                <button class="aa-button aa-button-primary" type="submit">Publicar evento {% include "includes/after_hours_icon.html" with icon="arrow" only %}</button>
             </footer>
         </form>
     </div>

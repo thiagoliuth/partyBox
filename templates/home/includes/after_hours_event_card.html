@@ -1,0 +1,5 @@
+{% if evento.dataEvento < hoje %}
+    {% include "home/includes/after_hours_event_card_shell.html" with encerrado=True %}
+{% else %}
+    {% include "home/includes/after_hours_event_card_shell.html" with encerrado=False %}
+{% endif %}

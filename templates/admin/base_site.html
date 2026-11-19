@@ -1,12 +1,10 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}{{ title }} | PartyBoxd{% endblock %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | PartyBoxd{% endblock %}
 
-{% block extrastyle %}
-    {{ block.super }}
-    {% include "includes/fonts.html" %}
-<script>
+{% block dark-mode-vars %}
+<script {% csp_nonce_attr %}>
     (() => {
         let theme;
         try { theme = localStorage.getItem("partyboxd-theme"); } catch (_) {}
@@ -16,17 +14,22 @@
         document.documentElement.dataset.theme = theme;
     })();
 </script>
-<link rel="stylesheet" href="{% static 'home/theme.css' %}" />
-<link rel="stylesheet" href="{% static 'home/admin.css' %}" />
-<script src="{% static 'home/theme.js' %}" defer></script>
+{% endblock %}
+
+{% block responsive %}
+    {{ block.super }}
+    {% include "includes/fonts.html" %}
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'home/after-hours.css' %}" {% csp_nonce_attr %}>
+    <link rel="stylesheet" href="{% static 'home/admin.css' %}" {% csp_nonce_attr %}>
+    <script src="{% static 'home/theme.js' %}" defer {% csp_nonce_attr %}></script>
 {% endblock %}
 
 {% block branding %}
-<div id="site-name">
-    <a href="{% url 'admin:index' %}"
-        >PartyBoxd <span class="admin-label">Administração</span></a
-    >
-</div>
+    <div id="site-name">
+        <a class="aa-brand" href="{% url 'admin:index' %}" aria-label="PartyBoxd — administração">
+            {% include "includes/after_hours_icon.html" with icon="brand" only %}<span>PartyBoxd</span>
+        </a>
+        <span class="pb-admin-label" aria-hidden="true">Administração</span>
+    </div>
 {% endblock %}
-
-{% block dark-mode-vars %}{% endblock %}
