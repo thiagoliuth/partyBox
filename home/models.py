@@ -13,6 +13,13 @@ class Categoria(models.Model):
         ARTE = "arte", "Arte"
         FESTA = "festa", "Festa"
         RAVE = "rave", "Rave"
+        PALESTRA = "palestra", "Palestra e Workshop"
+        CULTURA_POPULAR = "cultura_popular", "Cultura Popular"
+        FEIRA = "feira", "Feira"
+        CINEMA = "cinema", "Cinema"
+        INFANTIL = "infantil", "Infantil"
+        OUTROS = "outros", "Outros"
+
 
     tipo = models.CharField(max_length=20, choices=CategoriaType.choices)
 
@@ -62,9 +69,9 @@ class Evento(models.Model):
     nome = models.CharField(max_length=120)
     descricao = models.TextField()
     criado_em = models.DateTimeField(auto_now_add=True)
-    dataEvento = models.DateField()
-    horarioEvento = models.TimeField()
-    siglaEstado = models.CharField(max_length=2)
+    dataEvento = models.DateField("Data do evento")
+    horarioEvento = models.TimeField("Horário do evento")
+    siglaEstado = models.CharField("Estado", max_length=2)
     cidade = models.CharField(max_length=80)
     bairro = models.CharField(max_length=80)
     rua = models.CharField(max_length=80)
@@ -79,8 +86,8 @@ class Evento(models.Model):
     votosPositivos = models.IntegerField(default=0)
     votosNegativos = models.IntegerField(default=0)
     mediaClassificacao = models.FloatField(default=0.0)
-    ehPago = models.BooleanField(default=False)
-    ehPublico = models.BooleanField(default=True)
+    ehPago = models.BooleanField("O evento é pago?", default=False)
+    ehPublico = models.BooleanField("O evento é público?", default=True)
     linkSite = models.URLField(blank=True, null=True)
     linkInstagram = models.URLField(blank=True, null=True)
     cupom_codigo = models.CharField("Código do cupom", max_length=30, blank=True)

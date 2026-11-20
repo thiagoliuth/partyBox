@@ -5,6 +5,10 @@ from .models import Evento, Usuario
 
 
 class EventoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["categoria"].empty_label = "Seleciona uma categoria"
+
     class Meta:
         model = Evento
         fields = [
