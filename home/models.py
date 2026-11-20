@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 
 class Categoria(models.Model):
     class CategoriaType(models.TextChoices):
@@ -21,7 +22,7 @@ class Categoria(models.Model):
         OUTROS = "outros", "Outros"
 
 
-    tipo = models.CharField(max_length=20, choices=CategoriaType.choices)
+    tipo = models.CharField(max_length=20, choices=CategoriaType.choices, unique=True)
 
     class Meta:
         ordering = ["tipo"]
@@ -109,6 +110,15 @@ class Evento(models.Model):
         validade = self.cupom_dataExpiracao or self.dataEvento
         return validade >= timezone.localdate()
 
+    def __str__(self):
+        return self.nome
+
+    def get_absolute_url(self):
+        return reverse("evento_detalhe", args=[self.pk])
+
+    @property
+    def endereco(self):
+        return f"{self.rua}, {self.numero} - {self.bairro}, {self.cidade} - {self.siglaEstado}"
 
 class EventoImage(models.Model):
     image = models.ImageField(upload_to="evento_images/")

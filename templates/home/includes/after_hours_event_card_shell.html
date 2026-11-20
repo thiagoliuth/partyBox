@@ -7,16 +7,19 @@
         <a class="aa-card-face" href="{% url 'editar_evento' evento.pk %}">
             {% include "home/includes/after_hours_event_card_face.html" %}
         </a>
-    {% elif evento.descricao %}
+        {% else %}
+        <div class="aa-card-face">{% include "home/includes/after_hours_event_card_face.html" %}</div>
+        {% if evento.descricao %}
         <details class="aa-card-disclosure">
-            <summary class="aa-card-face">
-                {% include "home/includes/after_hours_event_card_face.html" %}
+            <summary class="aa-card-action">
+                <span class="aa-card-action-closed">Descrição</span><span class="aa-card-action-open">Fechar</span>
+                {% include "includes/after_hours_icon.html" with icon="chevron" only %}
             </summary>
             <div class="aa-card-description">{{ evento.descricao|linebreaksbr }}</div>
         </details>
-    {% else %}
-        <div class="aa-card-face">{% include "home/includes/after_hours_event_card_face.html" %}</div>
+        {% endif %}
     {% endif %}
+
     {% if acao == "eventos" and evento.cupom_valido %}
     <div class="aa-card-coupon">
         <span class="aa-kicker">{% include "includes/after_hours_icon.html" with icon="ticket" only %} Tem cupom</span>

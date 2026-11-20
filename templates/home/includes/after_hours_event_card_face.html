@@ -10,10 +10,12 @@
         <span class="aa-sr-only">{{ evento.dataEvento|date:"j \d\e F \d\e Y" }}, às {{ evento.horarioEvento|time:"H:i" }}</span>
     </time>
     {% if encerrado %}<span class="aa-ended-badge">Encerrado</span>{% endif %}
+    {% if acao == "eventos" %}<a class="aa-card-art-link" href="{{ evento.get_absolute_url }}" tabindex="-1" aria-hidden="true"></a>{% endif %}
+
 </span>
 <span class="aa-card-body">
     {% if evento.categoria %}<span class="aa-category-badge">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
-    {% if variante == "feature" %}<span class="aa-card-title" role="heading" aria-level="2">{{ evento.nome }}</span>{% else %}<span class="aa-card-title" role="heading" aria-level="3">{{ evento.nome }}</span>{% endif %}
+    {% if variante == "feature" %}<span class="aa-card-title" role="heading" aria-level="2">{{ evento.nome }}</span>{% else %}<span class="aa-card-title" role="heading" aria-level="3">{% if acao == "eventos" %}<a href="{{ evento.get_absolute_url }}">{{ evento.nome }}</a>{% else %}{{ evento.nome }}{% endif %}</span>{% endif %}
     <span class="aa-card-location">{{ evento.cidade }}{% if evento.siglaEstado %} · {{ evento.siglaEstado }}{% endif %}<span aria-hidden="true"> / {{ evento.horarioEvento|time:"H\hi" }}</span></span>
     {% if variante == "feature" and evento.descricao %}<span class="aa-feature-description">{{ evento.descricao }}</span>{% endif %}
     <span class="aa-card-foot">
@@ -26,8 +28,6 @@
             {% endwith %}
             {% if variante == "feature" %}
                 <span class="aa-card-action">Ver na agenda {% include "includes/after_hours_icon.html" with icon="diagonal" only %}</span>
-            {% elif acao == "eventos" and evento.descricao %}
-                <span class="aa-card-action"><span class="aa-card-action-closed">Descrição</span><span class="aa-card-action-open">Fechar</span> {% include "includes/after_hours_icon.html" with icon="chevron" only %}</span>
             {% elif acao == "mural" %}
                 <span class="aa-card-action" aria-hidden="true">{% include "includes/after_hours_icon.html" with icon="diagonal" only %}</span>
             {% endif %}

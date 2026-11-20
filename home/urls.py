@@ -17,4 +17,5 @@ urlpatterns = [
     ),
     path("sair/", LogoutView.as_view(), name="logout"),
     path("criar-conta/", views.cadastro, name="cadastro"),
+    path("eventos/<int:pk>/", views.evento_detalhe, name="evento_detalhe"),
 ]

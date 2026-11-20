@@ -341,8 +341,8 @@ class DescobertaEventosTests(TestCase):
         cls.usuario = get_user_model().objects.create_user(
             username="agenda", email="agenda@example.com", password="senha-teste"
         )
-        cls.musica = Categoria.objects.create(tipo=Categoria.CategoriaType.MUSICA)
-        cls.arte = Categoria.objects.create(tipo=Categoria.CategoriaType.ARTE)
+        cls.musica = Categoria.objects.get(tipo=Categoria.CategoriaType.MUSICA)
+        cls.arte = Categoria.objects.get(tipo=Categoria.CategoriaType.ARTE)
         cls.ontem = cls.criar_evento("Beta ontem", 5)
         cls.passado = cls.criar_evento("Alfa passado", 1)
         cls.hoje = cls.criar_evento("Zulu hoje", 6, ehPublico=False)
@@ -405,7 +405,7 @@ class DescobertaEventosTests(TestCase):
                 self.assertEqual(contexto["localidade_selecionada"], "São Paulo|MG")
                 self.assertEqual(contexto["localidade_nome"], "São Paulo – MG")
                 self.assertQuerySetEqual(contexto["eventos"], [self.outra_uf])
-                categorias = [self.arte] if rota == "index" else [self.arte, self.musica]
+                categorias = [self.arte] if rota == "index" else list(Categoria.objects.all())
                 self.assertQuerySetEqual(contexto["categorias"], categorias)
 
                 token = next(

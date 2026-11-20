@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ evento.nome }} • PartyBoxd{% endblock %}
+{% block main_class %}aa-main{% endblock %}
+
+{% block content %}
+<div class="aa-page aa-evento-page"{% if evento.thumbnail %} style="--evento-fundo: url('{{ evento.thumbnail.url }}')"{% endif %}>
+    <article class="aa-evento-card">
+        <a class="aa-text-link" href="{% url 'eventos' %}">{% include "includes/after_hours_icon.html" with icon="back" only %} Eventos</a>
+
+        <header class="aa-evento-header">
+            {% if evento.categoria %}<span class="aa-category-badge">{{ evento.categoria.get_tipo_display }}</span>{% endif %}
+            {% if encerrado %}<span class="aa-ended-badge">Encerrado</span>{% endif %}
+            <h1>{{ evento.nome }}</h1>
+            <p>Por @{{ evento.usuario.username }}</p>
+        </header>
+
+        {# Fase 2: o carrossel entra aqui no lugar da capa #}
+        {% if evento.thumbnail %}<img class="aa-evento-capa" src="{{ evento.thumbnail.url }}" alt="">{% endif %}
+
+        <dl class="aa-evento-info">
+            <div>
+                <dt>Quando</dt>
+                <dd><time datetime="{{ evento.dataEvento|date:'Y-m-d' }}T{{ evento.horarioEvento|time:'H:i' }}">{{ evento.dataEvento|date:"l, j \d\e F \d\e Y" }} · {{ evento.horarioEvento|time:"H\hi" }}</time></dd>
+            </div>
+            <div>
+                <dt>Onde</dt>
+                <dd>{{ evento.endereco }} · <a class="aa-text-link" href="https://www.google.com/maps/search/?api=1&query={{ evento.endereco|urlencode }}" target="_blank" rel="noopener noreferrer">Ver no mapa</a></dd>
+            </div>
+            <div>
+                <dt>Entrada</dt>
+                <dd>{% if evento.ehPago %}Pago{% else %}Grátis{% endif %}</dd>
+            </div>
+        </dl>
+
+        <section class="aa-evento-section" aria-labelledby="sobre-titulo">
+            <h2 id="sobre-titulo">Sobre o evento</h2>
+            {{ evento.descricao|linebreaks }}
+        </section>
+
+        {% if evento.cupom_valido %}
+        <section class="aa-evento-section aa-card-coupon" aria-label="Cupom">
+            <span class="aa-kicker">{% include "includes/after_hours_icon.html" with icon="ticket" only %} Tem cupom</span>
+            <p><strong>{{ evento.cupom_codigo }}</strong>{% if evento.cupom_descricao %} · {{ evento.cupom_descricao }}{% endif %}</p>
+            <p>Válido até {{ evento.cupom_dataExpiracao|default:evento.dataEvento|date:"d/m/Y" }}</p>
+        </section>
+        {% endif %}
+
+        {% if evento.linkSite or evento.linkInstagram %}
+        <section class="aa-evento-section aa-evento-links" aria-label="Links">
+            {% if evento.linkSite %}<a class="aa-button aa-button-outline" href="{{ evento.linkSite }}" target="_blank" rel="noopener noreferrer">Site oficial</a>{% endif %}
+            {% if evento.linkInstagram %}<a class="aa-button aa-button-outline" href="{{ evento.linkInstagram }}" target="_blank" rel="noopener noreferrer">Instagram</a>{% endif %}
+        </section>
+        {% endif %}
+
+        {% if user == evento.usuario %}
+        <p class="aa-evento-section"><a class="aa-button aa-button-primary" href="{% url 'editar_evento' evento.pk %}">Editar evento</a></p>
+        {% endif %}
+
+        {# Fase 3: avaliação · Fase 4: comentários #}
+    </article>
+</div>
+{% endblock %}

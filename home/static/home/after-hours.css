@@ -410,8 +410,13 @@ html[data-theme="light"] {
 }
 a.aa-card-face:hover { color: var(--aa-text); }
 .aa-card-disclosure { display: block; width: 100%; border-radius: inherit; }
-.aa-card-disclosure > summary { height: auto; }
+.aa-card-disclosure > summary { display: flex; justify-content: flex-end; padding: 0 var(--aa-3) var(--aa-3); list-style: none; }
 .aa-card-disclosure > summary, a.aa-card-face { cursor: pointer; }
+.aa-card-eventos { display: flex; flex-direction: column; }
+.aa-card-eventos > .aa-card-face { flex: 1; height: auto; }
+.aa-card-art-link { position: absolute; inset: 0; z-index: 3; }
+.aa-card-title a { color: inherit; }
+
 .aa-card-art {
     position: relative;
     isolation: isolate;
@@ -1000,3 +1005,35 @@ html:has(.aa-dialog[open]) { overflow: hidden; }
     :root { --aa-time: 0ms; --aa-zoom-time: 0ms; }
     .aa-card-face:is(a, summary):hover .aa-card-art img { transform: none; }
 }
+
+
+/* Página do evento */
+.aa-evento-page {
+    --evento-opacidade: 90%;
+    min-height: 100%;
+    padding: clamp(20px, 5vw, 72px) var(--aa-gutter);
+    background-color: var(--aa-bg);
+    background-image:
+        linear-gradient(color-mix(in srgb, var(--aa-bg) 25%, transparent), var(--aa-bg) 85%),
+        var(--evento-fundo, none);
+    background-size: cover;
+    background-position: center top;
+}
+.aa-evento-card {
+    max-width: 880px;
+    margin-inline: auto;
+    padding: clamp(20px, 3.5vw, 44px);
+    border: 1px solid var(--aa-rule);
+    border-radius: var(--aa-radius);
+    background: color-mix(in srgb, var(--aa-surface) var(--evento-opacidade), transparent);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--aa-shadow);
+}
+.aa-evento-header h1 { margin: 12px 0 4px; }
+.aa-evento-header p { margin: 0; color: var(--aa-muted); }
+.aa-evento-capa { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; margin-top: 24px; border-radius: var(--aa-radius); }
+.aa-evento-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; margin: 24px 0 0; }
+.aa-evento-info dt { color: var(--aa-muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.aa-evento-info dd { margin: 4px 0 0; color: var(--aa-text); }
+.aa-evento-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--aa-rule); }
+.aa-evento-links { display: flex; flex-wrap: wrap; gap: 10px; }

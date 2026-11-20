@@ -29,7 +29,8 @@
     >
         <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
         {% block header %}{% include "includes/after_hours_header.html" %}{% endblock %}
-        <main id="conteudo" class="aa-width aa-main" tabindex="-1">
+        <main id="conteudo" class="{% block main_class %}aa-width aa-main{% endblock %}" tabindex="-1">
+
             {% block content %}{% endblock %}
         </main>
 

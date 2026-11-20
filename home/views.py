@@ -210,3 +210,11 @@ def cadastro(request):
         "home/index.html",
         {**_mural_context(request), "cadastro_form": form},
     )
+
+def evento_detalhe(request, pk):
+    evento = get_object_or_404(Evento.objects.select_related("categoria", "usuario"), pk=pk)
+    return render(
+        request,
+        "home/evento_detalhe.html",
+        {"evento": evento, "encerrado": evento.dataEvento < timezone.localdate()}
+    )
